@@ -41,25 +41,68 @@ export const useIzinStore = defineStore('izin', () => {
   function buildFormData(form, id) {
     const t = toRaw(form)
     const formData = new FormData()
-
     const fields = [
-      'company_id', 'departement_id', 'user_id', 'permittype_id',
-      'schedule_id', 'permit_numbers', 'timein_adjust', 'timeout_adjust',
-      'current_shift_id', 'adjust_shift_id', 'start_time', 'end_time', 'notes', 'file'
+      'adjust_shift_id',
+      'company_id',
+      'current_shift_id',
+      'departement_id',
+      'end_date',
+      'end_time',
+      'file',
+      'notes',
+      'permit_numbers',
+      'permittype_id',
+      'schedule_id',
+      'start_date',
+      'start_time',
+      'timein_adjust',
+      'timeout_adjust',
+      'user_id',
     ]
 
+    // Append fields jika tidak null/undefined
     fields.forEach(field => {
-      if (t[field] !== undefined && t[field] !== null) {
+      if (t[field] !== undefined && t[field] !== null && t[field] !== '') {
         formData.append(field, t[field])
       }
     })
 
+    // Tanggal & waktu wajib dikirim dalam format yang tepat
+    // Format: YYYY-MM-DD untuk tanggal
+    // Format: HH:mm:ss untuk waktu
+    if (t.start_date) {
+      formData.append('start_date', dayjs(t.start_date).format('YYYY-MM-DD'))
+    } else {
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      formData.append('start_date', dayjs(yesterday).format('YYYY-MM-DD'));
+    }
+
+    if (t.end_date) {
+      formData.append('end_date', dayjs(t.end_date).format('YYYY-MM-DD'))
+    } else {
+      formData.append('end_date', dayjs(new Date).format('YYYY-MM-DD'))
+    }
+    console.log(t.start_time);
+
+    if (t.start_time) {
+      formData.append('start_time', t.start_time)
+    } else {
+      formData.append('start_time', dayjs(new Date).format('HH:mm'))
+    }
+
+    if (t.end_time) {
+      formData.append('end_time', t.end_time)
+    } else {
+      formData.append('end_time', dayjs(new Date).format('HH:mm'))
+    }
+
+    // Method spoofing for PUT
     if (id) formData.append('_method', 'PUT')
-    if (t.start_date) formData.append('start_date', dayjs(t.start_date).format('YYYY-MM-DD'))
-    if (t.end_date) formData.append('end_date', dayjs(t.end_date).format('YYYY-MM-DD'))
 
     return formData
   }
+
 
   const apiGetCompany = () => fetchData('/web-api/kelengkapan-form/all-company')
   const apiGetPermit = () => fetchData('/web-api/kelengkapan-form/all-permit')

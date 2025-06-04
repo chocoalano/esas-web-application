@@ -89,6 +89,7 @@ export const usePenggunaStore = defineStore('pengguna', () => {
     appendIfExists('nip', t.nip)
     appendIfExists('email', t.email)
     appendIfExists('status', t.status)
+    appendIfExists('password', t.password)
     if (t.avatar_file) formData.append('avatar', t.avatar_file)
 
     // Details
@@ -186,6 +187,19 @@ export const usePenggunaStore = defineStore('pengguna', () => {
     }
   }
 
+  async function apiDelete(id) {
+    isLoading.value.delete = true;
+    try {
+      const { data } = await api.delete(`/web-api/pengguna/${id}`)
+      return data; // Mengembalikan data agar bisa digunakan
+    } catch (error) {
+      console.error('Gagal menghapus data pengguna:', error);
+      throw error;
+    } finally {
+      isLoading.value.delete = false;
+    }
+  }
+
   return {
     headers,
     isLoading,
@@ -201,6 +215,7 @@ export const usePenggunaStore = defineStore('pengguna', () => {
     apiPostAdd,
     apiPutUpdate,
     apiDownloadPrint,
-    apiExport
+    apiExport,
+    apiDelete
   }
 })

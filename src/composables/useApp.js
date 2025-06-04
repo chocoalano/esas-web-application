@@ -30,6 +30,15 @@ export function useAssetDefaultImg() {
 
 export const formatDay = (day) => dayjs(day, 'YYYY-MM-DD').format('YYYY-MM-DD')
 
+export function formatDateToYMD(date) {
+  if (!date) return ''
+  const d = new Date(date)
+  const year = d.getFullYear()
+  const month = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
+}
+
 export const formatTime = (val) => {
   if (!val) return '00:00:00'
   if (typeof val === 'string') {

@@ -1,5 +1,4 @@
 // useForm.js
-import { formatDay } from '@/composables/useApp'
 import useRules from '@/plugins/validator'
 import { ref, watch, computed } from 'vue'
 
@@ -10,7 +9,7 @@ export function useForm(props, emit) {
   const formData = ref({
     company_id: props.data.company_id,
     name: props.data.name,
-    password: '', // Inisialisasi password dengan string kosong
+    password: '',
     nip: props.data.nip,
     email: props.data.email,
     email_verified_at: props.data.email_verified_at,

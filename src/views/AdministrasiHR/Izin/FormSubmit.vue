@@ -4,6 +4,7 @@ import { ref, watchEffect, computed, onMounted } from 'vue'
 import { stateForm } from './types'
 import { useIzinStore } from '@/stores/administrasiHR/izin'
 import dayjs from 'dayjs'
+import { formatDateToYMD } from '@/composables/useApp'
 
 const store = useIzinStore()
 const selectCompany = ref([])
@@ -112,210 +113,99 @@ const selectScheduleProps = (item) => {
 watchEffect(() => {
   formData.value = { ...props.data } // Untuk mendukung perubahan data ketika props berubah
 })
+
+function onDateChangeStart(value) {
+  formData.value.start_date = formatDateToYMD(value)
+}
+function onDateChangeEnd(value) {
+  formData.value.end_date = formatDateToYMD(value)
+}
+
 </script>
 <template>
-  <v-card
-    prepend-icon="mdi-information-outline"
-    title="Form Izin"
-    text="Silahkan pilih jenis form dan lengkapi form yang anda pilih dengan benar!"
-  >
+  <v-card prepend-icon="mdi-information-outline" title="Form Izin"
+    text="Silahkan pilih jenis form dan lengkapi form yang anda pilih dengan benar!">
     <v-form ref="formRef" @submit.prevent="handleConfirm">
       <v-card-text>
         <v-row dense>
           <v-col md="4" :cols="12">
-            <v-autocomplete
-              v-model="formData.company_id"
-              :items="selectCompany"
-              item-title="name"
-              item-value="id"
-              label="Pilih Perusahaan"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              @update:modelValue="onCompanyChange"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.company_id" :items="selectCompany" item-title="name" item-value="id"
+              label="Pilih Perusahaan" variant="outlined" density="compact" :rules="[rules.required]"
+              @update:modelValue="onCompanyChange" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
-            <v-autocomplete
-              v-model="formData.departement_id"
-              :items="selectDepartement"
-              item-title="name"
-              item-value="id"
-              label="Pilih Departement"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              @update:modelValue="onDepartementChange"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.departement_id" :items="selectDepartement" item-title="name"
+              item-value="id" label="Pilih Departement" variant="outlined" density="compact" :rules="[rules.required]"
+              @update:modelValue="onDepartementChange" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
-            <v-autocomplete
-              v-model="formData.user_id"
-              :items="selectUser"
-              item-title="name"
-              item-value="id"
-              label="Pilih User"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              @update:modelValue="onUserChange"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.user_id" :items="selectUser" item-title="name" item-value="id"
+              label="Pilih User" variant="outlined" density="compact" :rules="[rules.required]"
+              @update:modelValue="onUserChange" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
-            <v-autocomplete
-              v-model="formData.permittype_id"
-              :items="selectPermit"
-              item-title="type"
-              item-value="id"
-              label="Pilih Jenis Izin"
-              variant="outlined"
-              density="compact"
-              @update:modelValue="onPermitChange"
-              :rules="[rules.required]"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.permittype_id" :items="selectPermit" item-title="type" item-value="id"
+              label="Pilih Jenis Izin" variant="outlined" density="compact" @update:modelValue="onPermitChange"
+              :rules="[rules.required]" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
-            <v-autocomplete
-              v-model="formData.schedule_id"
-              :items="selectSchedule"
-              :item-props="selectScheduleProps"
-              item-title="name"
-              item-value="id"
-              label="Pilih Jadwal"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.schedule_id" :items="selectSchedule" :item-props="selectScheduleProps"
+              item-title="name" item-value="id" label="Pilih Jadwal" variant="outlined" density="compact"
+              :rules="[rules.required]" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
-            <v-text-field
-              v-model="formData.permit_numbers"
-              label="Izin Numbers"
-              placeholder="Nomor izin otomatis"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              required
-              disabled
-            />
+            <v-text-field v-model="formData.permit_numbers" label="Izin Numbers" placeholder="Nomor izin otomatis"
+              variant="outlined" density="compact" :rules="[rules.required]" required disabled />
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
-            <v-date-input
-              v-model="formData.start_date"
-              label="Pilih tanggal mulai"
-              clearable
-              variant="outlined"
-              prepend-icon=""
-              prepend-inner-icon="mdi-calendar"
-              density="compact"
-            />
+            <v-date-input v-model="formData.start_date" v-on:update:model-value="onDateChangeStart"
+              label="Pilih tanggal mulai" clearable variant="outlined" prepend-icon="" prepend-inner-icon="mdi-calendar"
+              density="compact" />
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
-            <v-date-input
-              v-model="formData.end_date"
-              label="Pilih tanggal selesai"
-              clearable
-              variant="outlined"
-              prepend-icon=""
-              prepend-inner-icon="mdi-calendar"
-              density="compact"
-            />
+            <v-date-input v-model="formData.end_date" v-on:update:model-value="onDateChangeEnd"
+              label="Pilih tanggal selesai" clearable variant="outlined" prepend-icon=""
+              prepend-inner-icon="mdi-calendar" density="compact" />
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
-            <v-text-field
-              v-model="formData.start_time"
-              :active="modal_time1"
-              :focused="modal_time1"
-              label="Pilih jam mulai"
-              variant="outlined"
-              prepend-inner-icon="mdi-clock-time-four-outline"
-              readonly
-              density="compact"
-            >
+            <v-text-field v-model="formData.start_time" :active="modal_time1" :focused="modal_time1"
+              label="Pilih jam mulai" variant="outlined" prepend-inner-icon="mdi-clock-time-four-outline" readonly
+              density="compact">
               <v-dialog v-model="modal_time1" activator="parent" width="auto">
-                <v-time-picker
-                  v-if="modal_time1"
-                  v-model="formData.start_time"
-                  format="24hr"
-                ></v-time-picker>
+                <v-time-picker v-if="modal_time1" v-model="formData.start_time" format="24hr"></v-time-picker>
               </v-dialog>
             </v-text-field>
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
-            <v-text-field
-              v-model="formData.end_time"
-              :active="modal_time2"
-              :focused="modal_time2"
-              label="Pilih jam selesai"
-              prepend-inner-icon="mdi-clock-time-four-outline"
-              variant="outlined"
-              readonly
-              density="compact"
-            >
+            <v-text-field v-model="formData.end_time" :active="modal_time2" :focused="modal_time2"
+              label="Pilih jam selesai" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined" readonly
+              density="compact">
               <v-dialog v-model="modal_time2" activator="parent" width="auto">
-                <v-time-picker
-                  v-if="modal_time2"
-                  v-model="formData.end_time"
-                  format="24hr"
-                ></v-time-picker>
+                <v-time-picker v-if="modal_time2" v-model="formData.end_time" format="24hr"></v-time-picker>
               </v-dialog>
             </v-text-field>
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 15">
-            <v-text-field
-              v-model="formData.timein_adjust"
-              :active="modal_time3"
-              :focused="modal_time3"
-              label="Pilih perubahan jam masuk"
-              prepend-inner-icon="mdi-clock-time-four-outline"
-              variant="outlined"
-              readonly
-              density="compact"
-            >
+            <v-text-field v-model="formData.timein_adjust" :active="modal_time3" :focused="modal_time3"
+              label="Pilih perubahan jam masuk" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined"
+              readonly density="compact">
               <v-dialog v-model="modal_time3" activator="parent" width="auto">
-                <v-time-picker
-                  v-if="modal_time3"
-                  v-model="formData.timein_adjust"
-                  format="24hr"
-                ></v-time-picker>
+                <v-time-picker v-if="modal_time3" v-model="formData.timein_adjust" format="24hr"></v-time-picker>
               </v-dialog>
             </v-text-field>
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 15">
-            <v-text-field
-              v-model="formData.timeout_adjust"
-              :active="modal_time4"
-              :focused="modal_time4"
-              label="Pilih perubahan jam pulang"
-              prepend-inner-icon="mdi-clock-time-four-outline"
-              variant="outlined"
-              readonly
-              density="compact"
-            >
+            <v-text-field v-model="formData.timeout_adjust" :active="modal_time4" :focused="modal_time4"
+              label="Pilih perubahan jam pulang" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined"
+              readonly density="compact">
               <v-dialog v-model="modal_time4" activator="parent" width="auto">
-                <v-time-picker
-                  v-if="modal_time4"
-                  v-model="formData.timeout_adjust"
-                  format="24hr"
-                ></v-time-picker>
+                <v-time-picker v-if="modal_time4" v-model="formData.timeout_adjust" format="24hr"></v-time-picker>
               </v-dialog>
             </v-text-field>
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 16">
-            <v-select
-              v-model="formData.current_shift_id"
-              :items="selectTimework"
-              density="compact"
-              label="Pilih shift berjalan sekarang"
-              variant="outlined"
-              item-title="name"
-              item-value="id"
-            >
+            <v-select v-model="formData.current_shift_id" :items="selectTimework" density="compact"
+              label="Pilih shift berjalan sekarang" variant="outlined" item-title="name" item-value="id">
               <template #item="{ item, props }">
                 <v-list-item v-bind="props">
                   {{ item.raw.name }} | {{ item.raw.in }} - {{ item.raw.out }}
@@ -324,15 +214,8 @@ watchEffect(() => {
             </v-select>
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 16">
-            <v-select
-              v-model="formData.adjust_shift_id"
-              :items="selectTimework"
-              density="compact"
-              label="Pilih shift yang ingin diajukan"
-              variant="outlined"
-              item-value="id"
-              item-title="name"
-            >
+            <v-select v-model="formData.adjust_shift_id" :items="selectTimework" density="compact"
+              label="Pilih shift yang ingin diajukan" variant="outlined" item-value="id" item-title="name">
               <template #item="{ item, props }">
                 <v-list-item v-bind="props">
                   {{ item.raw.name }} | {{ item.raw.in }} - {{ item.raw.out }}

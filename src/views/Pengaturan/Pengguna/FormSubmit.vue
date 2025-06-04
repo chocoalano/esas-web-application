@@ -4,13 +4,21 @@ import {
   useAssetUrl,
   useAssetDirectory,
   useAssetDefaultImg,
+  formatDateToYMD,
 } from '@/composables/useApp'
 import { useForm } from './useForm'
+import { usePengguna } from './usePengguna'
 
 const appDebug = useAppDebug()
 const assetUrl = useAssetUrl()
 const assetDirectory = useAssetDirectory()
 const assetDefaultImg = useAssetDefaultImg()
+
+const {
+  formState,
+  onDepartemenChange,
+  onPositionChange,
+} = usePengguna()
 
 const props = defineProps({
   icon: {
@@ -22,14 +30,6 @@ const props = defineProps({
     default: () => [],
   },
   selectItemDepartement: {
-    type: Array,
-    default: () => [],
-  },
-  selectItemPosition: {
-    type: Array,
-    default: () => [],
-  },
-  selectItemLevel: {
     type: Array,
     default: () => [],
   },
@@ -45,6 +45,10 @@ const props = defineProps({
   id: {
     type: Number,
     default: null,
+  },
+  error: {
+    type: Object,
+    default: () => { },
   },
   data: {
     type: Object,
@@ -109,6 +113,17 @@ const props = defineProps({
   },
 })
 
+function onDateChangeDetail(value) {
+  formData.value.details.datebirth = formatDateToYMD(value)
+}
+function onDateChangeEmpJoindate(value) {
+  formData.value.employee.join_date = formatDateToYMD(value)
+}
+function onDateChangeEmpSigndate(value) {
+  formData.value.employee.sign_date = formatDateToYMD(value)
+}
+
+
 const emit = defineEmits(['cancel', 'confirm'])
 const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = useForm(props, emit)
 </script>
@@ -122,84 +137,42 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
             <v-sheet border rounded class="py-5 px-5">
               <v-row dense>
                 <v-col md="6" cols="12">
-                  <v-autocomplete
-                    v-model="formData.company_id"
-                    :items="selectItemCompany"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama Perusahaan"
-                    placeholder="Masukkan nama perusahaan"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.company_id" :items="selectItemCompany" item-title="name"
+                    item-value="id" label="Nama Perusahaan" placeholder="Masukkan nama perusahaan" variant="outlined"
+                    density="compact" :rules="[rules.required]" required :error-messages="error.company_id" />
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.nip"
-                    label="NIP"
-                    placeholder="input NIP disini"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.nip" label="NIP" placeholder="input NIP disini" type="number"
+                    variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error.nip"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.name"
-                    label="Nama"
-                    placeholder="input nama disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.name" label="Nama" placeholder="input nama disini" type="text"
+                    variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error.name"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.email"
-                    label="Email"
-                    placeholder="input email disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.email" label="Email" placeholder="input email disini" type="text"
+                    variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error.email"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.password"
-                    label="Password"
-                    placeholder="input password disini"
-                    type="password"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.password" label="Password" placeholder="input password disini"
+                    type="password" variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error.password"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-btn-toggle
-                    v-model="formData.status"
-                    divided
-                    color="primary"
-                    variant="outlined"
-                    density="compact"
-                  >
+                  <v-btn-toggle v-model="formData.status" divided color="primary" variant="outlined" density="compact"
+                    :error-messages="error.status">
                     <v-btn value="active">Aktif</v-btn>
                     <v-btn value="inactive">Tidak Aktif</v-btn>
                     <v-btn value="resign">Berhenti</v-btn>
                   </v-btn-toggle>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-img
-                    :width="120"
-                    aspect-ratio="1"
-                    cover
+                  <v-img :width="120" aspect-ratio="1" cover
                     :lazy-src="`${assetUrl}/${assetDirectory}/${appDebug ? 'deployment' : 'production'}/${assetDefaultImg}`"
-                    :src="`${assetUrl}/${formData.avatar}`"
-                  ></v-img>
+                    :src="`${assetUrl}/${formData.avatar}`"></v-img>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-file-upload density="compact" v-model="formData.avatar_file"></v-file-upload>
@@ -209,23 +182,14 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
             <v-sheet border rounded class="py-5 px-5 mt-3">
               <v-row dense>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.salaries.basic_salary"
-                    label="Total gaji"
-                    placeholder="input total gaji disini"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.salaries.basic_salary" label="Total gaji"
+                    placeholder="input total gaji disini" type="number" variant="outlined" density="compact"
+                    :rules="[rules.required]" :error-messages="error['salaries.basic_salary']"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-btn-toggle
-                    v-model="formData.salaries.payment_type"
-                    color="primary"
-                    variant="outlined"
-                    density="compact"
-                  >
+                  <v-btn-toggle v-model="formData.salaries.payment_type"
+                    :error-messages="error['salaries.payment_type']" color="primary" variant="outlined"
+                    density="compact">
                     <v-btn value="Monthly">Bulanan</v-btn>
                     <v-btn value="Weekly">Mingguan</v-btn>
                     <v-btn value="Daily">Harian</v-btn>
@@ -238,41 +202,23 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
             <v-sheet border rounded class="py-5 px-5">
               <v-row dense>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.details.phone"
-                    label="HP/Telp"
-                    placeholder="input HP/Telp disini"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.details.phone" label="HP/Telp" placeholder="input HP/Telp disini"
+                    type="number" variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error['details.phone']"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-text-field
-                    v-model="formData.details.placebirth"
-                    label="Tempat lahir"
-                    placeholder="input tempat lahir disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.details.placebirth" label="Tempat lahir"
+                    placeholder="input tempat lahir disini" type="text" variant="outlined" density="compact"
+                    :rules="[rules.required]" :error-messages="error['details.placebirth']"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-date-input
-                    v-model="formData.details.datebirth"
-                    label="Tempat lahir"
-                    placeholder="input tanggal lahir disini"
-                    variant="outlined"
-                    density="compact"
-                    prepend-icon=""
-                    prepend-inner-icon="$calendar"
-                    :rules="[rules.required]"
-                  ></v-date-input>
+                  <v-date-input v-model="formData.details.datebirth" label="Tempat lahir"
+                    placeholder="input tanggal lahir disini" variant="outlined" density="compact" prepend-icon=""
+                    prepend-inner-icon="$calendar" @update:model-value="onDateChangeDetail" :rules="[rules.required]"
+                    :error-messages="error['details.datebirth']"></v-date-input>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-radio-group v-model="formData.details.gender" inline>
+                  <v-radio-group v-model="formData.details.gender" inline :error-messages="error['details.gender']">
                     <template v-slot:label>
                       <div>Pilih <strong>jenis kelamin</strong> anda dibawah ini:</div>
                     </template>
@@ -289,7 +235,7 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                   </v-radio-group>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-radio-group v-model="formData.details.blood" inline>
+                  <v-radio-group v-model="formData.details.blood" inline :error-messages="error['details.blood']">
                     <template v-slot:label>
                       <div>Pilih <strong>jenis golongan darah</strong> anda dibawah ini:</div>
                     </template>
@@ -316,7 +262,8 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                   </v-radio-group>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-radio-group v-model="formData.details.marital_status" inline>
+                  <v-radio-group v-model="formData.details.marital_status" inline
+                    :error-messages="error['details.marital_status']">
                     <template v-slot:label>
                       <div>Pilih <strong>status pernikahan</strong> anda dibawah ini:</div>
                     </template>
@@ -343,7 +290,7 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                   </v-radio-group>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-radio-group v-model="formData.details.religion" inline>
+                  <v-radio-group v-model="formData.details.religion" inline :error-messages="error['details.religion']">
                     <template v-slot:label>
                       <div>Pilih <strong>agama</strong> anda dibawah ini:</div>
                     </template>
@@ -386,71 +333,37 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
             <v-sheet border rounded class="py-5 px-5">
               <v-row dense>
                 <v-col md="3" cols="12">
-                  <v-btn-toggle
-                    v-model="formData.address.identity_type"
-                    color="primary"
-                    variant="outlined"
-                    density="compact"
-                  >
+                  <v-btn-toggle v-model="formData.address.identity_type" color="primary" variant="outlined"
+                    density="compact" :error-messages="error['address.identity_type']">
                     <v-btn value="ktp">E-KTP</v-btn>
                     <v-btn value="passport">Passport</v-btn>
                     <v-btn value="sim">SIM</v-btn>
                   </v-btn-toggle>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.address.identity_numbers"
-                    label="Nomer Identitas"
-                    placeholder="input nomor identitas disini"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.address.identity_numbers" label="Nomer Identitas"
+                    placeholder="input nomor identitas disini" type="number" variant="outlined" density="compact"
+                    :rules="[rules.required]" :error-messages="error['address.identity_numbers']"></v-text-field>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.address.province"
-                    label="Provinsi"
-                    placeholder="input provinsi disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.address.province" label="Provinsi" placeholder="input provinsi disini"
+                    type="text" variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error['address.province']"></v-text-field>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.address.city"
-                    label="Kota"
-                    placeholder="input kota disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.address.city" label="Kota" placeholder="input kota disini" type="text"
+                    variant="outlined" density="compact" :rules="[rules.required]"
+                    :error-messages="error['address.city']"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-textarea
-                    v-model="formData.address.citizen_address"
-                    label="Alamat tinggal identitas"
-                    row-height="20"
-                    rows="2"
-                    auto-grow
-                    variant="outlined"
-                    :rules="[rules.required]"
-                  ></v-textarea>
+                  <v-textarea v-model="formData.address.citizen_address" label="Alamat tinggal identitas"
+                    row-height="20" rows="2" auto-grow variant="outlined" :rules="[rules.required]"
+                    :error-messages="error['address.citizen_address']"></v-textarea>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-textarea
-                    v-model="formData.address.residential_address"
-                    label="Alamat tinggal saat ini"
-                    row-height="20"
-                    rows="2"
-                    auto-grow
-                    variant="outlined"
-                    :rules="[rules.required]"
-                  ></v-textarea>
+                  <v-textarea v-model="formData.address.residential_address" label="Alamat tinggal saat ini"
+                    row-height="20" rows="2" auto-grow variant="outlined" :rules="[rules.required]"
+                    :error-messages="error['address.residential_address']"></v-textarea>
                 </v-col>
               </v-row>
             </v-sheet>
@@ -459,131 +372,64 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
             <v-sheet border rounded class="py-5 px-5">
               <v-row dense>
                 <v-col md="3" cols="12">
-                  <v-autocomplete
-                    v-model="formData.employee.departement_id"
-                    :items="selectItemDepartement"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama departemen"
-                    placeholder="Masukkan nama departemen"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.employee.departement_id" :items="selectItemDepartement"
+                    item-title="name" item-value="id" label="Nama departemen" placeholder="Masukkan nama departemen"
+                    variant="outlined" density="compact" :rules="[rules.required]" required
+                    @update:model-value="onDepartemenChange(formData.company_id, formData.employee.departement_id)"
+                    :error-messages="error['employee.departement_id']" />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete
-                    v-model="formData.employee.job_position_id"
-                    :items="selectItemPosition"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama posisi"
-                    placeholder="Masukkan nama posisi"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.employee.job_position_id" :items="formState.selectItemPosition"
+                    item-title="name" item-value="id" label="Nama posisi" placeholder="Masukkan nama posisi"
+                    variant="outlined" density="compact" :rules="[rules.required]" required
+                    @update:model-value="onPositionChange(formData.company_id, formData.employee.departement_id)"
+                    :error-messages="error['employee.job_position_id']" />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete
-                    v-model="formData.employee.job_level_id"
-                    :items="selectItemLevel"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama level"
-                    placeholder="Masukkan nama level"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.employee.job_level_id" :items="formState.selectItemLevel"
+                    item-title="name" item-value="id" label="Pilih level" placeholder="Masukkan nama level"
+                    variant="outlined" density="compact" :rules="[rules.required]" required
+                    :error-messages="error['employee.job_level_id']" />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete
-                    v-model="formData.employee.approval_line_id"
-                    :items="selectItemLine"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama level"
-                    placeholder="Masukkan nama level"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.employee.approval_line_id" :items="selectItemLine" item-title="name"
+                    item-value="id" label="Pilih user atasan" placeholder="PIlih user atasan" variant="outlined"
+                    density="compact" :rules="[rules.required]" required
+                    :error-messages="error['employee.approval_line_id']" />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete
-                    v-model="formData.employee.approval_manager_id"
-                    :items="selectItemMngr"
-                    item-title="name"
-                    item-value="id"
-                    label="Nama level"
-                    placeholder="Masukkan nama level"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                    required
-                  />
+                  <v-autocomplete v-model="formData.employee.approval_manager_id" :items="selectItemMngr"
+                    item-title="name" item-value="id" label="Pilih user manager" placeholder="Pilih user manager"
+                    variant="outlined" density="compact" :rules="[rules.required]" required
+                    :error-messages="error['employee.approval_manager_id']" />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-date-input
-                    v-model="formData.employee.join_date"
-                    label="Tgl. Bergabung"
-                    placeholder="input tgl. bergabung disini"
-                    variant="outlined"
-                    density="compact"
-                    prepend-icon=""
-                    prepend-inner-icon="$calendar"
-                    :rules="[rules.required]"
-                  ></v-date-input>
+                  <v-date-input v-model="formData.employee.join_date" label="Tgl. Bergabung"
+                    placeholder="input tgl. bergabung disini" variant="outlined" density="compact" prepend-icon=""
+                    prepend-inner-icon="$calendar" @update:model-value="onDateChangeEmpJoindate"
+                    :rules="[rules.required]" :error-messages="error['employee.join_date']"></v-date-input>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-date-input
-                    v-model="formData.employee.sign_date"
-                    label="Tgl. Masuk"
-                    placeholder="input tgl. masuk disini"
-                    variant="outlined"
-                    density="compact"
-                    prepend-icon=""
-                    prepend-inner-icon="$calendar"
-                    :rules="[rules.required]"
-                  ></v-date-input>
+                  <v-date-input v-model="formData.employee.sign_date" label="Tgl. Masuk"
+                    placeholder="input tgl. masuk disini" variant="outlined" density="compact" prepend-icon=""
+                    prepend-inner-icon="$calendar" @update:model-value="onDateChangeEmpSigndate"
+                    :rules="[rules.required]" :error-messages="error['employee.sign_date']"></v-date-input>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.employee.bank_name"
-                    label="Nama Bank"
-                    placeholder="input nama bank disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.employee.bank_name" label="Nama Bank"
+                    placeholder="input nama bank disini" type="text" variant="outlined" density="compact"
+                    :rules="[rules.required]" :error-messages="error['employee.bank_name']"></v-text-field>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.employee.bank_number"
-                    label="Nomor Bank/Rekening"
-                    placeholder="input nomor bank/rekening disini"
-                    type="number"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.employee.bank_number" label="Nomor Bank/Rekening"
+                    placeholder="input nomor bank/rekening disini" type="number" variant="outlined" density="compact"
+                    :rules="[rules.required]" :error-messages="error['employee.bank_number']"></v-text-field>
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-text-field
-                    v-model="formData.employee.bank_holder"
-                    label="Nama pemilik bank/rekening"
-                    placeholder="input nama pemilik bank/rekening disini"
-                    type="text"
-                    variant="outlined"
-                    density="compact"
-                    :rules="[rules.required]"
-                  ></v-text-field>
+                  <v-text-field v-model="formData.employee.bank_holder" label="Nama pemilik bank/rekening"
+                    placeholder="input nama pemilik bank/rekening disini" type="text" variant="outlined"
+                    density="compact" :rules="[rules.required]"
+                    :error-messages="error['employee.bank_holder']"></v-text-field>
                 </v-col>
               </v-row>
             </v-sheet>

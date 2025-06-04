@@ -46,7 +46,7 @@ export function usePengguna() {
     message: '',
     type: 'error',
   })
-
+  const formErrors = ref({})
   const dataShow = reactive(userShow())
 
   const formState = ref({
@@ -193,7 +193,7 @@ export function usePengguna() {
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = 'company-report.pdf'
+      link.download = 'users.pdf'
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -212,7 +212,7 @@ export function usePengguna() {
       const url = window.URL.createObjectURL(blob)
       const link = document.createElement('a')
       link.href = url
-      link.download = 'company-report.xlsx'
+      link.download = 'users.xlsx'
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
@@ -282,7 +282,9 @@ export function usePengguna() {
         formState.value.dialog.show = false
       }
     } catch (error) {
-      alert('Error submitting data: ' + (error?.message || error))
+      console.log(error.response.data);
+      formErrors.value = error.response.data.errors
+      alert('Error submitting data: ' + (error.response.data.message || error))
     }
   }
 
@@ -331,12 +333,13 @@ export function usePengguna() {
     formState.value.idData = null
     formState.value.dialog.show = false
   }
+
   const handleConfirmReset = async () => {
     try {
       if (formState.value.idData) {
         await store.apiResetPhoneId(formState.value.idData)
       } else if (pagination.selected.length > 0) {
-        await Promise.all(pagination.selected.map((id) => store.apiDelete(id)))
+        await Promise.all(pagination.selected.map((id) => store.apiResetPhoneId(id)))
       }
       await loadItems()
     } catch (error) {
@@ -357,7 +360,7 @@ export function usePengguna() {
       if (formState.value.idData) {
         await store.apiResetPassword(formState.value.idData)
       } else if (pagination.selected.length > 0) {
-        await Promise.all(pagination.selected.map((id) => store.apiDelete(id)))
+        await Promise.all(pagination.selected.map((id) => store.apiResetPassword(id)))
       }
       await loadItems()
     } catch (error) {
@@ -423,6 +426,7 @@ export function usePengguna() {
     tableOptions,
     formState,
     alertState,
+    formErrors,
     onDepartemenChange,
     onPositionChange,
     onCompanyChange,
