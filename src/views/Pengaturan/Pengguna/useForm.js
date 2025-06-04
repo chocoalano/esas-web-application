@@ -1,4 +1,5 @@
 // useForm.js
+import { formatDay } from '@/composables/useApp'
 import useRules from '@/plugins/validator'
 import { ref, watch, computed } from 'vue'
 

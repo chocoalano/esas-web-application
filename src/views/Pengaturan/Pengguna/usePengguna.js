@@ -4,6 +4,8 @@ import { usePenggunaStore } from '@/stores/pengaturan/pengguna'
 import debounce from 'lodash/debounce'
 import dayjs from 'dayjs'
 import userShow from './types/userShow'
+import { formatDay } from '@/composables/useApp'
+import { get, set } from 'lodash'
 
 export function usePengguna() {
   const store = usePenggunaStore()
@@ -258,16 +260,29 @@ export function usePengguna() {
 
   const handleSubmitForm = async ({ id, form }) => {
     try {
+      const formattedForm = { ...form }
+
+      // Daftar field tanggal nested
+      const tanggalFields = ['details.datebirth', 'employee.join_date', 'employee.sign_date']
+
+      // Format tanggal untuk setiap field yang tersedia
+      tanggalFields.forEach((field) => {
+        const value = get(formattedForm, field)
+        if (value) {
+          set(formattedForm, field, formatDay(value))
+        }
+      })
       const response = id
-        ? await store.apiPutUpdate(form, id)
-        : await store.apiPostAdd(form)
+        ? await store.apiPutUpdate(formattedForm, id)
+        : await store.apiPostAdd(formattedForm)
+
       if (response) {
         handleAlert(response.success, response.message)
         loadItems()
         formState.value.dialog.show = false
       }
     } catch (error) {
-      alert('Error submitting data:', error)
+      alert('Error submitting data: ' + (error?.message || error))
     }
   }
 
