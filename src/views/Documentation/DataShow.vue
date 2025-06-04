@@ -1,7 +1,7 @@
 <script setup>
 import { usePermissionCheck } from '@/composables/useApp'
 import { useDokumentasiStore } from '@/stores/dokumentasi'
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 
 const router = useRouter()
@@ -16,14 +16,29 @@ const data = ref({
   status: false,
   text_docs: '',
 })
+
 const setCompany = async () => {
-  const response = await store.apiGetShow(route.params.id)
-  data.value = response.data
+  loading.value = true
+  try {
+    const response = await store.apiGetShow(route.params.id)
+    data.value = response.data
+  } catch (error) {
+    console.error('Error fetching data:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
-onMounted(() => {
-  setCompany()
-})
+// Initial fetch
+onMounted(setCompany)
+
+// Refetch when route ID changes
+watch(
+  () => route.params.id,
+  () => {
+    setCompany()
+  }
+)
 
 const handleCancel = () => {
   router.push({ name: 'adm.dokumentasi.list' })
@@ -33,14 +48,10 @@ const handleUpdate = () => {
 }
 </script>
 
+
 <template>
-  <v-card
-    prepend-icon="mdi-information"
-    :title="data.title"
-    :text="data.subtitle"
-    class="border border-thin"
-    elevation="0"
-  >
+  <v-card prepend-icon="mdi-information" :title="data.title" :text="data.subtitle" class="border border-thin"
+    elevation="0">
     <v-card-text>
       <v-skeleton-loader v-if="loading" type="card" class="mb-4">
         <template #default>
@@ -58,9 +69,7 @@ const handleUpdate = () => {
     <v-card-actions>
       <v-spacer />
       <v-btn @click="handleCancel">Batalkan</v-btn>
-      <v-btn @click="handleUpdate" color="primary" v-if="permissionCheck('update_role')"
-        >Perbaharui</v-btn
-      >
+      <v-btn @click="handleUpdate" color="primary" v-if="permissionCheck('update_role')">Perbaharui</v-btn>
     </v-card-actions>
   </v-card>
 </template>
