@@ -131,6 +131,7 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
 <template>
   <v-card :prepend-icon="icon" :title="title" :text="text">
     <v-form ref="formRef" @submit.prevent="handleConfirm">
+      <!-- {{ error.status }} -->
       <v-card-text>
         <v-row dense>
           <v-col md="6" cols="12">
@@ -162,12 +163,14 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                     :error-messages="error.password"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-btn-toggle v-model="formData.status" divided color="primary" variant="outlined" density="compact"
-                    :error-messages="error.status">
+                  <v-btn-toggle v-model="formData.status" divided color="primary" variant="outlined" density="compact">
                     <v-btn value="active">Aktif</v-btn>
                     <v-btn value="inactive">Tidak Aktif</v-btn>
                     <v-btn value="resign">Berhenti</v-btn>
                   </v-btn-toggle>
+                  <div v-if="error.status" class="text-error text-body-small mt-1">
+                    {{ error.status }}
+                  </div>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-img :width="120" aspect-ratio="1" cover
@@ -187,13 +190,15 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                     :rules="[rules.required]" :error-messages="error['salaries.basic_salary']"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
-                  <v-btn-toggle v-model="formData.salaries.payment_type"
-                    :error-messages="error['salaries.payment_type']" color="primary" variant="outlined"
+                  <v-btn-toggle v-model="formData.salaries.payment_type" color="primary" variant="outlined"
                     density="compact">
                     <v-btn value="Monthly">Bulanan</v-btn>
                     <v-btn value="Weekly">Mingguan</v-btn>
                     <v-btn value="Daily">Harian</v-btn>
                   </v-btn-toggle>
+                  <div v-if="error['salaries.payment_type']" class="text-error text-body-small mt-1">
+                    {{ error['salaries.payment_type'] }}
+                  </div>
                 </v-col>
               </v-row>
             </v-sheet>
@@ -339,6 +344,9 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                     <v-btn value="passport">Passport</v-btn>
                     <v-btn value="sim">SIM</v-btn>
                   </v-btn-toggle>
+                  <div v-if="error['address.identity_type']" class="text-error text-body-small mt-1">
+                    {{ error['address.identity_type'] }}
+                  </div>
                 </v-col>
                 <v-col md="3" cols="12">
                   <v-text-field v-model="formData.address.identity_numbers" label="Nomer Identitas"
