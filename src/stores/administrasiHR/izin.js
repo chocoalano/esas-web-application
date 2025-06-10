@@ -7,6 +7,8 @@ export const useIzinStore = defineStore('izin', () => {
   const headers = computed(() => [
     { title: "Jenis Izin", align: "start", sortable: true, key: "permit_type.type" },
     { title: "ID Numbers", align: "start", sortable: true, key: "permit_numbers" },
+    { title: "Nip", align: "start", sortable: true, key: "user.nip" },
+    { title: "Nama", align: "start", sortable: true, key: "user.name" },
     { title: "Waktu kerja", align: "start", sortable: true, key: "user_timework_schedule.work_day" },
     { title: "Dari Tgl", align: "start", sortable: true, key: "start_date" },
     { title: "Sampai Tgl", align: "end", sortable: true, key: "end_date" },

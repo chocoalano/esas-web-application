@@ -3,9 +3,11 @@ import dayjs from 'dayjs'
 import { ref, reactive, watch, onMounted, toRaw } from 'vue'
 import debounce from 'lodash/debounce'
 import { stateAlert, stateForm, stateTable, stateTableFilters } from './types'
+import { useAuthStore } from '@/stores/auth'
 
 export function useIzin() {
   const store = useIzinStore()
+  const authStore = useAuthStore()
 
   // PAGINATION dan FILTER
   const pagination = reactive(stateTable())
@@ -19,6 +21,8 @@ export function useIzin() {
     type: null,
     step: null,
   })
+
+  const formErrors = ref({})
 
   const handleAlert = (success, message) => {
     alertState.value = {
@@ -236,10 +240,11 @@ export function useIzin() {
         await loadItems()
         formState.value.dialog.show = false
         handleAlert(response.success, response.message)
+        formState.value.dialog.show = false
       }
     } catch (error) {
-      console.error('❌ Error submitting data:', error)
-      formState.value.dialog.show = false
+      formErrors.value = error.response.data.errors
+      handleAlert(false, `Error submitting data: ${error}`)
     }
   }
 
@@ -258,16 +263,14 @@ export function useIzin() {
       } else if (pagination.selected.length > 0) {
         responses = await Promise.all(pagination.selected.map(id => store.apiDelete(id)))
       } else {
-        console.warn('❗ Tidak ada data yang dipilih untuk dihapus.')
-        return
+        handleAlert(false, `Tidak ada data yang dipilih untuk dihapus.`)
       }
-
       // Tangani alert per respons jika banyak, atau satu jika tunggal
       responses.forEach(res => handleAlert(res.success, res.message))
 
       await loadItems()
     } catch (error) {
-      console.error('❌ Gagal menghapus data:', error)
+      handleAlert(false, `Gagal menghapus data: ${error}`)
     } finally {
       formState.value.dialog.show = false
       pagination.selected = []
@@ -286,15 +289,15 @@ export function useIzin() {
 
   const handleConfirmApproval = async (form) => {
     if (!form || !form.data || !form.id || !form.type) {
-      console.error('❌ Form tidak valid:', form)
+      handleAlert(false, `Form tidak valid:${form}`)
       return
     }
     console.log('🚀 Sedang submit approval', form)
     try {
       await store.apiPutApproval(form.data, form.id, form.type, form.notes)
-      console.log('✅ Approval berhasil')
+      handleAlert(true, `Approval berhasil`)
     } catch (error) {
-      console.error('❌ Gagal melakukan approval data:', error)
+      handleAlert(false, `Gagal melakukan approval data: ${error}`)
     } finally {
       await loadItems()
       dialogApprove.value = false
@@ -322,20 +325,20 @@ export function useIzin() {
       type: type,
       step: 'manager'
     }
-    alert(`Approve mngr ID : ${id}`)
+    // alert(`Approve mngr ID : ${id}`)
   }
   const approveHr = async (id, type) => {
     dialogApprove.value = true
     attApprove.value = {
       id: id,
       type: type,
-      step: 'hr'
+      step: 'hrga'
     }
-    alert(`Approve hr ID : ${id}`)
+    // alert(`Approve hr ID : ${id}`)
   }
   const validate = (data, type) => {
     const users = toRaw(data)
-    const t = users.filter(user => user.user_type === type && user.user_approve === 'w')
+    const t = users.filter(user => user.user_type === type && user.user_approve === 'w' && user.user_id === authStore.profile.id)
     return t.length > 0 ? true : false
   }
 
@@ -350,6 +353,7 @@ export function useIzin() {
     selectType,
     dialogApprove,
     attApprove,
+    formErrors,
     handleTableOptions,
     handleBtnChange,
     handleDateRangeChange,

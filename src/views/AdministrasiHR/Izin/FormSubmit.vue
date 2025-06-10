@@ -26,6 +26,10 @@ const props = defineProps({
     type: Object,
     default: () => stateForm().formData,
   },
+  validate: {
+    type: Object,
+    default: () => { }
+  },
 })
 const emit = defineEmits(['cancel', 'confirm'])
 const idData = ref(props.id)
@@ -131,27 +135,28 @@ function onDateChangeEnd(value) {
           <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.company_id" :items="selectCompany" item-title="name" item-value="id"
               label="Pilih Perusahaan" variant="outlined" density="compact" :rules="[rules.required]"
-              @update:modelValue="onCompanyChange" required></v-autocomplete>
+              @update:modelValue="onCompanyChange" required :error-messages="validate.company_id"></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.departement_id" :items="selectDepartement" item-title="name"
               item-value="id" label="Pilih Departement" variant="outlined" density="compact" :rules="[rules.required]"
-              @update:modelValue="onDepartementChange" required></v-autocomplete>
+              @update:modelValue="onDepartementChange" required
+              :error-messages="validate.departement_id"></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.user_id" :items="selectUser" item-title="name" item-value="id"
               label="Pilih User" variant="outlined" density="compact" :rules="[rules.required]"
-              @update:modelValue="onUserChange" required></v-autocomplete>
+              @update:modelValue="onUserChange" required :error-messages="validate.user_id"></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.permittype_id" :items="selectPermit" item-title="type" item-value="id"
               label="Pilih Jenis Izin" variant="outlined" density="compact" @update:modelValue="onPermitChange"
-              :rules="[rules.required]" required></v-autocomplete>
+              :rules="[rules.required]" required :error-messages="validate.permittype_id"></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.schedule_id" :items="selectSchedule" :item-props="selectScheduleProps"
               item-title="name" item-value="id" label="Pilih Jadwal" variant="outlined" density="compact"
-              :rules="[rules.required]" required></v-autocomplete>
+              :rules="[rules.required]" required :error-messages="validate.schedule_id"></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
             <v-text-field v-model="formData.permit_numbers" label="Izin Numbers" placeholder="Nomor izin otomatis"
@@ -160,17 +165,17 @@ function onDateChangeEnd(value) {
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
             <v-date-input v-model="formData.start_date" v-on:update:model-value="onDateChangeStart"
               label="Pilih tanggal mulai" clearable variant="outlined" prepend-icon="" prepend-inner-icon="mdi-calendar"
-              density="compact" />
+              density="compact" :error-messages="validate.start_date" />
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
             <v-date-input v-model="formData.end_date" v-on:update:model-value="onDateChangeEnd"
               label="Pilih tanggal selesai" clearable variant="outlined" prepend-icon=""
-              prepend-inner-icon="mdi-calendar" density="compact" />
+              prepend-inner-icon="mdi-calendar" density="compact" :error-messages="validate.end_date" />
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
             <v-text-field v-model="formData.start_time" :active="modal_time1" :focused="modal_time1"
               label="Pilih jam mulai" variant="outlined" prepend-inner-icon="mdi-clock-time-four-outline" readonly
-              density="compact">
+              density="compact" :error-messages="validate.start_time">
               <v-dialog v-model="modal_time1" activator="parent" width="auto">
                 <v-time-picker v-if="modal_time1" v-model="formData.start_time" format="24hr"></v-time-picker>
               </v-dialog>
@@ -179,7 +184,7 @@ function onDateChangeEnd(value) {
           <v-col md="4" :cols="12" v-if="formData.permittype_id !== 15">
             <v-text-field v-model="formData.end_time" :active="modal_time2" :focused="modal_time2"
               label="Pilih jam selesai" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined" readonly
-              density="compact">
+              density="compact" :error-messages="validate.end_time">
               <v-dialog v-model="modal_time2" activator="parent" width="auto">
                 <v-time-picker v-if="modal_time2" v-model="formData.end_time" format="24hr"></v-time-picker>
               </v-dialog>
@@ -188,7 +193,7 @@ function onDateChangeEnd(value) {
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 15">
             <v-text-field v-model="formData.timein_adjust" :active="modal_time3" :focused="modal_time3"
               label="Pilih perubahan jam masuk" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined"
-              readonly density="compact">
+              readonly density="compact" :error-messages="validate.timein_adjust">
               <v-dialog v-model="modal_time3" activator="parent" width="auto">
                 <v-time-picker v-if="modal_time3" v-model="formData.timein_adjust" format="24hr"></v-time-picker>
               </v-dialog>
@@ -197,7 +202,7 @@ function onDateChangeEnd(value) {
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 15">
             <v-text-field v-model="formData.timeout_adjust" :active="modal_time4" :focused="modal_time4"
               label="Pilih perubahan jam pulang" prepend-inner-icon="mdi-clock-time-four-outline" variant="outlined"
-              readonly density="compact">
+              readonly density="compact" :error-messages="validate.timeout_adjust">
               <v-dialog v-model="modal_time4" activator="parent" width="auto">
                 <v-time-picker v-if="modal_time4" v-model="formData.timeout_adjust" format="24hr"></v-time-picker>
               </v-dialog>
@@ -205,7 +210,8 @@ function onDateChangeEnd(value) {
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 16">
             <v-select v-model="formData.current_shift_id" :items="selectTimework" density="compact"
-              label="Pilih shift berjalan sekarang" variant="outlined" item-title="name" item-value="id">
+              label="Pilih shift berjalan sekarang" variant="outlined" item-title="name" item-value="id"
+              :error-messages="validate.current_shift_id">
               <template #item="{ item, props }">
                 <v-list-item v-bind="props">
                   {{ item.raw.name }} | {{ item.raw.in }} - {{ item.raw.out }}
@@ -215,7 +221,8 @@ function onDateChangeEnd(value) {
           </v-col>
           <v-col md="4" :cols="12" v-if="formData.permittype_id === 16">
             <v-select v-model="formData.adjust_shift_id" :items="selectTimework" density="compact"
-              label="Pilih shift yang ingin diajukan" variant="outlined" item-value="id" item-title="name">
+              label="Pilih shift yang ingin diajukan" variant="outlined" item-value="id" item-title="name"
+              :error-messages="validate.adjust_shift_id">
               <template #item="{ item, props }">
                 <v-list-item v-bind="props">
                   {{ item.raw.name }} | {{ item.raw.in }} - {{ item.raw.out }}
@@ -224,11 +231,11 @@ function onDateChangeEnd(value) {
             </v-select>
           </v-col>
           <v-col md="12" :cols="12">
-            <v-textarea v-model="formData.notes" label="Keterangan" variant="outlined">
+            <v-textarea v-model="formData.notes" label="Keterangan" variant="outlined" :error-messages="validate.notes">
             </v-textarea>
           </v-col>
           <v-col md="12" :cols="12">
-            <v-file-upload v-model="formData.file" density="compact"></v-file-upload>
+            <v-file-upload v-model="formData.file" density="compact" :error-messages="validate.file"></v-file-upload>
           </v-col>
         </v-row>
       </v-card-text>
