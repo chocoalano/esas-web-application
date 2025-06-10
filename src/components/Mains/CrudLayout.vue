@@ -4,10 +4,12 @@ import { ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import dayjs from 'dayjs'
 import { usePermissionCheck } from '@/composables/useApp'
+import { useAuthStore } from '@/stores/auth'
 
 // Responsiveness helper
 const { mobile } = useDisplay()
 const { permissionCheck } = usePermissionCheck()
+const authdata = useAuthStore()
 // Props (bisa dikembangkan untuk lebih fleksibel)
 defineProps({
   defaultPath: {
@@ -90,31 +92,17 @@ const handleBtnChange = (value) => {
 
       <!-- Date Picker & Toggle Buttons -->
       <v-col cols="12" md="6" class="d-flex align-center gap-2 justify-md-end flex-wrap">
-        <v-date-input
-          v-model="datepicker"
-          label="Select range"
-          :max-width="mobile ? '100%' : '368px'"
-          clearable
-          variant="outlined"
-          prepend-icon=""
-          prepend-inner-icon="mdi-calendar"
-          @update:model-value="handleDateChange"
-          density="compact"
-          class="mt-6 mr-3"
-          multiple="range"
-        />
-
-        <v-btn-toggle
-          v-model="toggle"
-          @update:model-value="handleBtnChange"
-          density="comfortable"
-          group
-        >
+        <v-date-input v-model="datepicker" label="Select range" :max-width="mobile ? '100%' : '368px'" clearable
+          variant="outlined" prepend-icon="" prepend-inner-icon="mdi-calendar" @update:model-value="handleDateChange"
+          density="compact" class="mt-6 mr-3" multiple="range" />
+        <v-btn-toggle v-model="toggle" @update:model-value="handleBtnChange" density="comfortable" group>
           <v-btn icon="mdi-filter" v-if="permissionCheck(permission[0])"></v-btn>
           <v-btn icon="mdi-refresh" v-if="permissionCheck(permission[1])"></v-btn>
           <v-btn icon="mdi-plus" v-if="permissionCheck(permission[2])"></v-btn>
-          <v-btn icon="mdi-file-excel" v-if="permissionCheck(permission[3])"></v-btn>
-          <v-btn icon="mdi-printer" v-if="permissionCheck(permission[4])"></v-btn>
+          <v-btn icon="mdi-file-excel"
+            v-if="permissionCheck(permission[3]) || authdata.profile?.employee?.departement_id === 13"></v-btn>
+          <v-btn icon="mdi-printer"
+            v-if="permissionCheck(permission[4]) || authdata.profile?.employee?.departement_id === 13"></v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>
