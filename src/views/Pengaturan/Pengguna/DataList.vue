@@ -175,7 +175,6 @@ const {
           text="Apakah Anda yakin ingin Reset Password item ini, ketika data ini direset maka sistem akan mereset data Password tersebut dengan merubah password menjadi NIP item ini sebagai password default, dan data yang telah ter-reset tidak dapat dikembalikan! Apakah anda yakin?"
           cancelText="Batal" confirmText="Ya, Reset" @cancel="handleCancelResetPass"
           @confirm="handleConfirmResetPass" />
-
         <FormSubmit v-if="formState.dialog.variant === 'form'" :key="formState.idData" :data="formState.formData"
           :title="formState.isEdit ? 'Edit Pengguna' : 'Tambah Pengguna'" :cancelText="'Batal'"
           :confirmText="formState.isEdit ? 'Perbarui' : 'Simpan'" :selectItemCompany="formState.selectItemCompany"

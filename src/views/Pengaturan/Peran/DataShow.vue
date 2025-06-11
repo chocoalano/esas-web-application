@@ -1,41 +1,53 @@
 <script setup>
-import { ref, watch } from 'vue'
+import { usePeranStore } from '@/stores/pengaturan/peran'
+import { onMounted, ref, watch } from 'vue'
 
 // Props
 const props = defineProps({
-  icon: { type: String, default: 'mdi-map-marker' },
+  icon: { type: String, default: 'mdi-account-key' },
   data: {
     type: Object,
     default: () => ({
-      companyName: '',
-      latitude: '',
-      longitude: '',
-      radius: '',
-      address: '',
+      role_ids: [],
+      user_ids: [], // multiple user IDs assigned to the role
     }),
   },
-  title: { type: String, default: 'Form Perusahaan' },
-  text: { type: String, default: 'Lengkapi data perusahaan dengan benar.' },
+  title: { type: String, default: 'Form Role' },
+  text: { type: String, default: 'Silakan isi informasi role dengan benar.' },
   cancelText: { type: String, default: 'Batal' },
+  submitText: { type: String, default: 'Simpan' },
   loading: { type: Boolean, default: false },
 })
+const roleItems = ref([])
+const userItems = ref([])
+const store = usePeranStore()
 
-const emit = defineEmits(['cancel'])
+onMounted(async () => {
+  const res_peran = await store.apiGetPeran()
+  const res_user = await store.apiGetUser()
+  roleItems.value = res_peran.data
+  userItems.value = res_user.data
+})
 
-// Reactive formData dari props
+const emit = defineEmits(['cancel', 'submit'])
+
+// Reactive form data
 const formData = ref({ ...props.data })
 
-// Watch props.data jika berubah
+// Watch props.data agar bisa update form jika ada perubahan dari parent
 watch(
   () => props.data,
   (newVal) => {
     formData.value = { ...newVal }
   },
-  { deep: true },
+  { deep: true }
 )
 
-// Emit saat tombol cancel ditekan
+// Cancel action
 const handleCancel = () => emit('cancel')
+
+// Submit action
+const handleSubmit = () => emit('submit', { form: formData })
 </script>
 
 <template>
@@ -43,39 +55,24 @@ const handleCancel = () => emit('cancel')
     <v-card-text>
       <v-skeleton-loader v-if="loading" type="card" class="mb-4">
         <template #default>
-          <v-list-item v-for="n in 5" :key="n">
+          <v-list-item v-for="n in 3" :key="n">
             <v-skeleton-loader type="text" class="mx-4" />
           </v-list-item>
         </template>
       </v-skeleton-loader>
 
       <template v-else>
-        <v-list-item>
-          <v-list-item-title>Nama Perusahaan</v-list-item-title>
-          <v-list-item-subtitle>{{ formData.companyName }}</v-list-item-subtitle>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Latitude</v-list-item-title>
-          <v-list-item-subtitle>{{ formData.latitude }}</v-list-item-subtitle>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Longitude</v-list-item-title>
-          <v-list-item-subtitle>{{ formData.longitude }}</v-list-item-subtitle>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Radius</v-list-item-title>
-          <v-list-item-subtitle>{{ formData.radius }}</v-list-item-subtitle>
-        </v-list-item>
-        <v-list-item>
-          <v-list-item-title>Alamat</v-list-item-title>
-          <v-list-item-subtitle>{{ formData.address }}</v-list-item-subtitle>
-        </v-list-item>
+        <v-autocomplete v-model="formData.role_ids" :items="roleItems" item-title="name" item-value="id"
+          label="Pilih peran" multiple chips clearable variant="outlined" density="compact" />
+        <v-autocomplete v-model="formData.user_ids" :items="userItems" item-title="name" item-value="id"
+          label="Pilih Pengguna" chips closable-chips multiple variant="outlined" density="compact"></v-autocomplete>
       </template>
     </v-card-text>
 
     <v-card-actions>
       <v-spacer />
-      <v-btn @click="handleCancel">{{ cancelText }}</v-btn>
+      <v-btn @click="handleCancel" color="secondary" variant="outlined">{{ cancelText }}</v-btn>
+      <v-btn @click="handleSubmit" color="primary" :loading="loading">{{ submitText }}</v-btn>
     </v-card-actions>
   </v-card>
 </template>

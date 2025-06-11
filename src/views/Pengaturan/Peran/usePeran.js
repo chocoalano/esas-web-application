@@ -27,7 +27,7 @@ export function usePeran() {
     isEdit: false,
     idData: null,
     selectItemPermission: [],
-    formData: { name: '', permission: [] },
+    formData: { name: '', permission: [], user_ids: [] },
     dialog: { show: false, variant: null, maxwidth: 400 },
   })
 
@@ -174,11 +174,11 @@ export function usePeran() {
     formState.value.isEdit = true
 
     const { data } = await store.apiGetShow(id)
-
     formState.value.selectItemPermission = data.select_permission
     formState.value.formData = {
       name: data.role.name,
       permission: data.permission,
+      user_ids: data.user_ids,
     }
   }
 
@@ -201,6 +201,23 @@ export function usePeran() {
 
       if (response) {
         await loadItems()
+        showAlert(response.success, response.message)
+        handleCancelForm()
+      }
+    } catch (error) {
+      console.error('Error submitting data:', error)
+      handleCancelForm()
+    }
+  }
+
+  const handleSubmitRolesetForm = async ({ form }) => {
+    try {
+      // Ambil data dari form sebagai object, bukan array
+      const { role_ids, user_ids } = form._rawValue
+
+      const response = await store.apiSetRoles({ role_ids, user_ids })
+
+      if (response) {
         showAlert(response.success, response.message)
         handleCancelForm()
       }
@@ -255,6 +272,7 @@ export function usePeran() {
     handleBtnChange,
     handleCancelForm,
     handleSubmitForm,
+    handleSubmitRolesetForm,
     loadFormData,
     handleRemove,
     handleConfirmRemove,

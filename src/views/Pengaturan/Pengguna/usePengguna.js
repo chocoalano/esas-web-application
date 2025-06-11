@@ -229,6 +229,7 @@ export function usePengguna() {
   }
 
   const loadFormData = async (id, variant) => {
+    formState.value.isEdit = id ? true : false
     openDialog(variant)
     formState.value.idData = id
     const response = await store.apiGetShow(id)

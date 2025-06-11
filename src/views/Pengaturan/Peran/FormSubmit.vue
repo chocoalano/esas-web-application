@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watchEffect, computed } from 'vue'
+import { usePeranStore } from '@/stores/pengaturan/peran'
+import { ref, watchEffect, computed, onMounted } from 'vue'
 // Props untuk membuat komponen lebih fleksibel
 const props = defineProps({
   icon: {
@@ -41,13 +42,14 @@ const props = defineProps({
 
 // Emit untuk mengirim event saat tombol ditekan
 const emit = defineEmits(['cancel', 'confirm'])
-
+const store = usePeranStore()
 // Inisialisasi formData berdasarkan props data
 const idData = ref(props.id)
 const formData = ref({
   name: props.data.name,
   permission: props.data.permission,
 })
+const userItems = ref([])
 
 // Mengatur state form apakah untuk create atau edit
 const isEditMode = computed(() => !!props.data.id)
@@ -75,20 +77,20 @@ const handleConfirm = () => {
 watchEffect(() => {
   formData.value = { ...props.data } // Untuk mendukung perubahan data ketika props berubah
 })
+
+onMounted(async () => {
+  const res_user = await store.apiGetUser()
+  userItems.value = res_user.data
+})
 </script>
 <template>
   <v-card :prepend-icon="icon" :title="title" :text="text">
     <v-form ref="formRef" @submit.prevent="handleConfirm">
       <v-card-text>
-        <v-text-field
-          v-model="formData.name"
-          label="Nama Peran"
-          placeholder="Masukkan nama peran"
-          variant="outlined"
-          density="compact"
-          :rules="[rules.required]"
-          required
-        ></v-text-field>
+        <v-text-field v-model="formData.name" label="Nama Peran" placeholder="Masukkan nama peran" variant="outlined"
+          density="compact" :rules="[rules.required]" required></v-text-field>
+        <v-autocomplete v-model="formData.user_ids" :items="userItems" item-title="name" item-value="id"
+          label="Pilih Pengguna" chips closable-chips multiple variant="outlined" density="compact"></v-autocomplete>
         <v-table>
           <thead>
             <tr>
@@ -100,14 +102,8 @@ watchEffect(() => {
             <tr v-for="item in selectItemPermission" :key="item.name">
               <td>{{ item.name }}</td>
               <td v-for="i in item.permission" :key="i.id">
-                <v-switch
-                  v-model="formData.permission"
-                  hide-details
-                  inset
-                  color="primary"
-                  :label="i.name"
-                  :value="i.id"
-                ></v-switch>
+                <v-switch v-model="formData.permission" hide-details inset color="primary" :label="i.name"
+                  :value="i.id"></v-switch>
               </td>
             </tr>
           </tbody>

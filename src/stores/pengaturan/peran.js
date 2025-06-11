@@ -19,6 +19,22 @@ export const usePeranStore = defineStore('peran', () => {
     delete: false
   });
 
+  async function fetchData(endpoint, params = {}, type = 'show') {
+    isLoading.value[type] = true
+    try {
+      const { data } = await api.get(endpoint, { params })
+      return data
+    } catch (error) {
+      console.error(`Gagal mengambil data dari ${endpoint}:`, error)
+      throw error
+    } finally {
+      isLoading.value[type] = false
+    }
+  }
+
+  const apiGetPeran = () => fetchData('/web-api/kelengkapan-form/all-roles')
+  const apiGetUser = () => fetchData('/web-api/kelengkapan-form/all-user')
+
   // Fungsi untuk mengambil data peran dengan pagination
   async function apiListPaginate({ page = 1, itemsPerPage = 10, sortBy, search }) {
     isLoading.value.list = true;
@@ -68,12 +84,13 @@ export const usePeranStore = defineStore('peran', () => {
   }
 
   // Fungsi untuk memperbaharui data peran dengan form
-  async function apiPutUpdate({ name, permission }, id) {
+  async function apiPutUpdate({ name, permission, user_ids }, id) {
     isLoading.value.update = true;
     try {
       const { data } = await api.put(`/web-api/peran/${id}`, {
         name: name,
         permission: permission,
+        user_ids: user_ids,
       })
       return data; // Mengembalikan data agar bisa digunakan
     } catch (error) {
@@ -129,6 +146,8 @@ export const usePeranStore = defineStore('peran', () => {
   return {
     headers,
     isLoading,
+    apiGetPeran,
+    apiGetUser,
     apiListPaginate,
     apiGetShow,
     apiPostAdd,

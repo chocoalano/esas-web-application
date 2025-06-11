@@ -140,27 +140,28 @@ const { formRef, formData, isEditMode, handleCancel, handleConfirm, rules } = us
                 <v-col md="6" cols="12">
                   <v-autocomplete v-model="formData.company_id" :items="selectItemCompany" item-title="name"
                     item-value="id" label="Nama Perusahaan" placeholder="Masukkan nama perusahaan" variant="outlined"
-                    density="compact" :rules="[rules.required]" required :error-messages="error.company_id" />
+                    density="compact" :rules="[rules.required]" required :error-messages="error.company_id"
+                    :readonly="props.id ? true : false" />
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-text-field v-model="formData.nip" label="NIP" placeholder="input NIP disini" type="number"
-                    variant="outlined" density="compact" :rules="[rules.required]"
-                    :error-messages="error.nip"></v-text-field>
+                    variant="outlined" density="compact" :rules="[rules.required]" :error-messages="error.nip"
+                    :readonly="props.id ? true : false"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-text-field v-model="formData.name" label="Nama" placeholder="input nama disini" type="text"
-                    variant="outlined" density="compact" :rules="[rules.required]"
-                    :error-messages="error.name"></v-text-field>
+                    variant="outlined" density="compact" :rules="[rules.required]" :error-messages="error.name"
+                    :readonly="props.id ? true : false"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-text-field v-model="formData.email" label="Email" placeholder="input email disini" type="text"
-                    variant="outlined" density="compact" :rules="[rules.required]"
-                    :error-messages="error.email"></v-text-field>
+                    variant="outlined" density="compact" :rules="[rules.required]" :error-messages="error.email"
+                    :readonly="props.id ? true : false"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-text-field v-model="formData.password" label="Password" placeholder="input password disini"
                     type="password" variant="outlined" density="compact" :rules="[rules.required]"
-                    :error-messages="error.password"></v-text-field>
+                    :error-messages="error.password" :readonly="props.id ? true : false"></v-text-field>
                 </v-col>
                 <v-col md="6" cols="12">
                   <v-btn-toggle v-model="formData.status" divided color="primary" variant="outlined" density="compact">
