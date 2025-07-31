@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth/auth";
 import router from "@/router";
 
 const baseURL = import.meta.env.VITE_BASE_API || "http://localhost:3000";
@@ -29,12 +29,12 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    if (error.response?.status === 401 && !isLoggingOut) {
+    localStorage.removeItem('authToken');
+    if (error.response.status === 500) {
       isLoggingOut = true;
 
       const authStore = useAuthStore();
       authStore.logout();
-
       // Tunggu next tick supaya route change lebih mulus
       setTimeout(() => {
         router.push("/login");

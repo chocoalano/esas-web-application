@@ -1,114 +1,35 @@
 <script setup>
-import { ref, watchEffect, computed } from 'vue'
-// Props untuk membuat komponen lebih fleksibel
-const props = defineProps({
-  icon: {
-    type: String,
-    default: 'mdi-map-marker',
-  },
-  selectItem: {
-    type: Array,
-    default: () => [],
-  },
-  id: {
-    type: Number,
-    default: null,
-  },
-  data: {
-    type: Object,
-    default: () => ({
-      company_id: null,
-      name: '',
-    }),
-  },
-  title: {
-    type: String,
-    default: 'Form default',
-  },
-  text: {
-    type: String,
-    default: 'Lengkapi data dengan benar.',
-  },
-  cancelText: {
-    type: String,
-    default: 'Batal',
-  },
-  confirmText: {
-    type: String,
-    default: 'Simpan',
-  },
-})
+import { useForm } from './useForm'; // Pastikan path ini benar
 
-// Emit untuk mengirim event saat tombol ditekan
-const emit = defineEmits(['cancel', 'confirm'])
-
-// Inisialisasi formData berdasarkan props data
-const idData = ref(props.id)
-const formData = ref({
-  companyName: props.data.companyName,
-  latitude: props.data.latitude,
-  longitude: props.data.longitude,
-  radius: props.data.radius,
-  address: props.data.address,
-})
-
-// Mengatur state form apakah untuk create atau edit
-const isEditMode = computed(() => !!props.data.id)
-
-// Validasi form
-const rules = {
-  required: (value) => !!value || 'Field ini wajib diisi',
-}
-
-const formRef = ref(null)
-
-// Fungsi cancel untuk form
-const handleCancel = () => {
-  emit('cancel')
-}
-
-// Fungsi submit untuk form
-const handleConfirm = () => {
-  if (formRef.value.validate()) {
-    emit('confirm', { form: formData, id: idData })
-  }
-}
-
-// Watch jika data diubah di luar
-watchEffect(() => {
-  formData.value = { ...props.data } // Untuk mendukung perubahan data ketika props berubah
-})
+const {
+  store,
+  formRef,
+  formData,
+  handleConfirm, // <-- Tambahkan ini
+  handleCancel,  // <-- Tambahkan ini
+  isEditMode,    // <-- Tambahkan ini
+  cancelText,    // <-- Tambahkan ini
+  icon,          // <-- Tambahkan ini
+  title,         // <-- Tambahkan ini
+  text,          // <-- Tambahkan ini
+  rules,         // <-- Tambahkan ini
+} = useForm();
 </script>
+
 <template>
-  <v-card :prepend-icon="icon" :title="title" :text="text">
+  <v-card :prepend-icon="icon" :title="title" :text="text" class="border border-thin" elevation="0" rounded="xl">
     <v-form ref="formRef" @submit.prevent="handleConfirm">
       <v-card-text>
         <v-row dense>
           <v-col md="6" :cols="12">
-            <v-autocomplete
-              v-model="formData.company_id"
-              :items="selectItem"
-              item-title="name"
-              item-value="id"
-              label="Nama Perusahaan"
-              placeholder="Masukkan nama perusahaan"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              required
-            ></v-autocomplete>
+            <v-autocomplete v-model="formData.company_id" :items="store.companyOptions" item-title="name"
+              item-value="id" label="Nama Perusahaan" placeholder="Masukkan nama perusahaan" variant="outlined"
+              density="compact" rounded="lg" :rules="[rules.required]" required></v-autocomplete>
           </v-col>
 
           <v-col md="6" :cols="12">
-            <v-text-field
-              v-model="formData.name"
-              label="Nama Departemen"
-              placeholder="Masukkan nama departemen"
-              variant="outlined"
-              density="compact"
-              :rules="[rules.required]"
-              required
-            ></v-text-field>
+            <v-text-field v-model="formData.name" label="Nama Departemen" placeholder="Masukkan nama departemen"
+              variant="outlined" density="compact" rounded="lg" :rules="[rules.required]" required></v-text-field>
           </v-col>
         </v-row>
       </v-card-text>
@@ -120,8 +41,7 @@ watchEffect(() => {
           {{ cancelText }}
         </v-btn>
 
-        <v-btn color="primary" @click="handleConfirm">
-          {{ isEditMode ? 'Perbarui' : 'Simpan' }}
+        <v-btn color="primary" type="submit"> {{ isEditMode ? 'Perbarui' : 'Simpan' }}
         </v-btn>
       </v-card-actions>
     </v-form>

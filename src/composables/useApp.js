@@ -1,9 +1,8 @@
-import { useAuthStore } from "@/stores/auth";
+import { useAuthStore } from "@/stores/auth/auth";
 import dayjs from 'dayjs'
 
 export function usePermissionCheck() {
   const store = useAuthStore();
-
   const permissionCheck = (str) => {
     if (!Array.isArray(store.permission)) {
       console.warn("Permission data is not an array:", store.permission);

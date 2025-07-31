@@ -4,7 +4,7 @@ import { ref, watch } from 'vue'
 import { useDisplay } from 'vuetify'
 import dayjs from 'dayjs'
 import { usePermissionCheck } from '@/composables/useApp'
-import { useAuthStore } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth/auth'
 
 // Responsiveness helper
 const { mobile } = useDisplay()
@@ -94,8 +94,9 @@ const handleBtnChange = (value) => {
       <v-col cols="12" md="6" class="d-flex align-center gap-2 justify-md-end flex-wrap">
         <v-date-input v-model="datepicker" label="Select range" :max-width="mobile ? '100%' : '368px'" clearable
           variant="outlined" prepend-icon="" prepend-inner-icon="mdi-calendar" @update:model-value="handleDateChange"
-          density="compact" class="mt-6 mr-3" multiple="range" />
-        <v-btn-toggle v-model="toggle" @update:model-value="handleBtnChange" density="comfortable" group>
+          density="compact" class="mt-6 mr-3" multiple="range" rounded="xl" />
+        <v-btn-toggle v-model="toggle" @update:model-value="handleBtnChange" density="comfortable" group
+          variant="outlined" rounded="xl">
           <v-btn icon="mdi-filter" v-if="permissionCheck(permission[0])"></v-btn>
           <v-btn icon="mdi-refresh" v-if="permissionCheck(permission[1])"></v-btn>
           <v-btn icon="mdi-plus" v-if="permissionCheck(permission[2])"></v-btn>
