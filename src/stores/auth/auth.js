@@ -154,6 +154,19 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  async function SET_FCM_TOKEN(token) {
+    try {
+      isLoading.value = true
+      const response = await api.post(`/general-module/auth/set-token`, { "token": token })
+      return response;
+    } catch (error) {
+      console.error('Gagal menyimpan data token fcm:', error);
+      throw error
+    } finally {
+      isLoading.value = false
+    }
+  }
+
   // Login status
   const isAuthenticated = computed(() => Boolean(token.value))
 
@@ -177,6 +190,7 @@ export const useAuthStore = defineStore('auth', () => {
     setProfile,
     LOGIN_ACTION,
     LOGOUT_ACTION,
+    SET_FCM_TOKEN,
     GET_PROFILE_ACTION,
     POST_PROFILE_ACTION,
     GET_FORM_PROFILE_ATTRIBUTE,
