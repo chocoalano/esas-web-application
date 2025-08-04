@@ -100,8 +100,8 @@ const getApprovalIcon = (approvals) => {
 
 <template>
   <CrudLayout :permission="[
-    'view_any_permits',
-    'view_any_permits',
+    'view_permits',
+    'view_permits',
     'create_permits',
     'export_permits', // Tambahkan izin delete jika belum ada untuk CrudLayout
     'export_permits', // Tambahkan izin delete jika belum ada untuk CrudLayout

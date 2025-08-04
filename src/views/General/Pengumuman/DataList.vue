@@ -80,11 +80,11 @@ const cancelDelete = () => {
 
 <template>
   <CrudLayout :permission="[
-    'view_any_announcements',
+    'view_announcements',
+    'view_announcements',
     'create_announcements',
     'export_announcements',
-    // 'view_announcements',
-    // 'view_announcements',
+    'export_announcements',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin" elevation="0" rounded="xl">
       <v-data-table-server v-model="pagination.selected" :headers="store.headers" :items="pagination.serverItems"
