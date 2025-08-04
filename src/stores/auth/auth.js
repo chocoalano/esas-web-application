@@ -23,8 +23,11 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Helper untuk membuat FormData nested sesuai Laravel dot notation
-  function buildFormData(datapost) {
+  function buildFormData(datapost, isput = true) {
     const formData = new FormData()
+    if (isput) {
+      formData.append('_method', 'PUT')
+    }
     const appendFormData = (data, parentKey = '') => {
       for (const key in data) {
         if (!Object.prototype.hasOwnProperty.call(data, key)) continue
@@ -47,12 +50,13 @@ export const useAuthStore = defineStore('auth', () => {
   async function GET_FORM_PROFILE_ATTRIBUTE() {
     try {
       isLoading.value = true
+      const q = profile.value
       const res = await api.get('/general-module/users/create', {
         params: {
-          company_id: profile.value.company_id,
-          dept_id: profile.value.employee.departement_id,
-          post_id: profile.value.employee.job_position_id,
-          lvl_id: profile.value.employee.job_level_id,
+          company_id: q.company_id,
+          dept_id: q.employee.departement_id,
+          post_id: q.employee.job_position_id,
+          lvl_id: q.employee.job_level_id,
         }
       })
       return res
@@ -109,8 +113,8 @@ export const useAuthStore = defineStore('auth', () => {
   async function POST_PROFILE_ACTION(datapost) {
     try {
       isLoading.value = true
-      const formData = buildFormData(datapost)
-      const res = await api.post('/general-module/profile', formData, {
+      const formData = buildFormData(datapost, true)
+      const res = await api.post('/general-module/auth', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       })
       return res.data.data

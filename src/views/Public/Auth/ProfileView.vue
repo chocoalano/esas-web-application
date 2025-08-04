@@ -5,136 +5,39 @@ import {
   useAssetDirectory,
   useAssetDefaultImg,
 } from '@/composables/useApp'
+import { useProfileView } from './profileView'
+import { onMounted } from 'vue'
 import useRules from '@/plugins/validator'
-import { useAuthStore } from '@/stores/auth/auth'
-import { onMounted, ref } from 'vue'
-import { useToast } from 'vue-toast-notification'
 
-const store = useAuthStore()
 const rules = useRules()
-const toast = useToast()
-
 const appDebug = useAppDebug()
 const assetUrl = useAssetUrl()
 const assetDirectory = useAssetDirectory()
 const assetDefaultImg = useAssetDefaultImg()
 
-const formRef = ref()
+const {
+  formRef,
+  selectOptions,
+  bloodTypes,
+  maritalStatuses,
+  religions,
+  formData,
+  LOAD_INITIAL_DATA,
+  LOAD_FORM_ATTRIBUTE,
+  HANDLE_SUBMIT
+} = useProfileView();
 
-const selectOptions = ref({
-  companies: [],
-  departements: [],
-  positions: [],
-  levels: [],
-  users: [],
+onMounted(() => {
+  LOAD_INITIAL_DATA()
+  LOAD_FORM_ATTRIBUTE()
 })
-
-const initFormData = () => ({
-  company_id: '',
-  name: '',
-  nip: '',
-  email: '',
-  password: '',
-  email_verified_at: '',
-  avatar: '',
-  avatar_file: null,
-  status: '',
-  details: {
-    phone: '',
-    placebirth: '',
-    datebirth: '',
-    gender: '',
-    blood: '',
-    marital_status: '',
-    religion: '',
-  },
-  address: {
-    identity_type: '',
-    identity_numbers: '',
-    province: '',
-    city: '',
-    citizen_address: '',
-    residential_address: '',
-  },
-  employee: {
-    departement_id: '',
-    job_position_id: '',
-    job_level_id: '',
-    approval_line_id: '',
-    approval_manager_id: '',
-    join_date: '',
-    sign_date: '',
-    bank_name: '',
-    bank_number: '',
-    bank_holder: '',
-  },
-  salaries: {
-    basic_salary: null,
-    payment_type: null,
-  },
-})
-
-const formData = ref(initFormData())
-
-onMounted(async () => {
-  try {
-    const res = await store.GET_PROFILE_ACTION()
-    if (res?.user) {
-      formData.value = { ...formData.value, ...res.user }
-      await loadFormAttributes()
-    } else {
-      throw new Error('Data user tidak ditemukan')
-    }
-  } catch (err) {
-    toast.error('Gagal memuat data profil.')
-    console.error(err)
-  }
-})
-
-const loadFormAttributes = async () => {
-  try {
-    const res = await store.GET_FORM_PROFILE_ATTRIBUTE()
-    if (res?.status === 200 && res.data?.form) {
-      const { form } = res.data
-      selectOptions.value = {
-        companies: form.companies,
-        departements: form.departements,
-        positions: form.job_positions,
-        levels: form.job_levels,
-        users: form.users,
-      }
-    } else {
-      throw new Error('Data form tidak ditemukan')
-    }
-  } catch (error) {
-    toast.error('Gagal memuat data kelengkapan form.')
-    console.error(error)
-  }
-}
-
-const handleSubmit = async () => {
-  const { valid } = await formRef.value.validate()
-  if (!valid) {
-    toast.warning('Periksa kembali input yang belum valid.')
-    return
-  }
-
-  try {
-    const res = await store.POST_PROFILE_ACTION(formData.value)
-    toast.success('Profil berhasil diperbarui!')
-    console.log(res)
-  } catch (error) {
-    toast.error('Gagal memperbarui profil.')
-    console.error(error)
-  }
-}
 </script>
 
 
 <template>
   <v-card class="mx-auto border border-thin" prepend-icon="mdi-account" title="Form profil"
     text="Silahkan lengkapi form profil ini dengan baik dan benar!" elevation="0">
-    <v-form ref="formRef" @submit.prevent="handleSubmit">
+    <v-form ref="formRef" @submit.prevent="HANDLE_SUBMIT">
       <v-card-text>
         <v-row dense>
           <v-col md="6" cols="12">
@@ -235,92 +138,43 @@ const handleSubmit = async () => {
                     <template v-slot:label>
                       <div>Pilih <strong>jenis golongan darah</strong> anda dibawah ini:</div>
                     </template>
-                    <v-radio value="a">
+
+                    <v-radio v-for="blood in bloodTypes" :key="blood.value" :value="blood.value">
                       <template v-slot:label>
-                        <div>Gol <strong class="text-success">A</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="b">
-                      <template v-slot:label>
-                        <div>Gol <strong class="text-primary">B</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="o">
-                      <template v-slot:label>
-                        <div>Gol <strong class="text-info">O</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="ab">
-                      <template v-slot:label>
-                        <div>Gol <strong class="text-error">AB</strong></div>
+                        <div>Gol <strong :class="blood.color">{{ blood.label }}</strong></div>
                       </template>
                     </v-radio>
                   </v-radio-group>
                 </v-col>
+
                 <v-col md="6" cols="12">
                   <v-radio-group v-model="formData.details.marital_status" inline>
                     <template v-slot:label>
                       <div>Pilih <strong>status pernikahan</strong> anda dibawah ini:</div>
                     </template>
-                    <v-radio value="single">
+
+                    <v-radio v-for="status in maritalStatuses" :key="status.value" :value="status.value">
                       <template v-slot:label>
-                        <div>Saya <strong class="text-success">lajang</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="married">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">sudah menikah</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="widow">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">janda</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="widower">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">duda</strong></div>
+                        <div>Saya <strong class="text-success">{{ status.label }}</strong></div>
                       </template>
                     </v-radio>
                   </v-radio-group>
                 </v-col>
+
                 <v-col md="6" cols="12">
                   <v-radio-group v-model="formData.details.religion" inline>
                     <template v-slot:label>
                       <div>Pilih <strong>agama</strong> anda dibawah ini:</div>
                     </template>
-                    <v-radio value="islam">
+
+                    <v-radio v-for="religion in religions" :key="religion.value" :value="religion.value">
                       <template v-slot:label>
-                        <div>Saya <strong class="text-success">islam</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="protestan">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">protestan</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="khatolik">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">khatolik</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="hindu">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">hindu</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="buddha">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">buddha</strong></div>
-                      </template>
-                    </v-radio>
-                    <v-radio value="khonghucu">
-                      <template v-slot:label>
-                        <div>Saya <strong class="text-success">khonghucu</strong></div>
+                        <div>Saya <strong class="text-success">{{ religion.label }}</strong></div>
                       </template>
                     </v-radio>
                   </v-radio-group>
                 </v-col>
+
               </v-row>
             </v-sheet>
           </v-col>
@@ -363,27 +217,27 @@ const handleSubmit = async () => {
             <v-sheet border rounded class="py-5 px-5">
               <v-row dense>
                 <v-col md="3" cols="12">
-                  <v-autocomplete v-model="formData.employee.departement_id" :items="selectOptions.selectItemCompany"
+                  <v-autocomplete v-model="formData.employee.departement_id" :items="selectOptions.departements"
                     item-title="name" item-value="id" label="Nama departemen" placeholder="Masukkan nama departemen"
                     variant="outlined" density="compact" :rules="[rules.required]" required />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete v-model="formData.employee.job_position_id" :items="selectOptions.sele"
+                  <v-autocomplete v-model="formData.employee.job_position_id" :items="selectOptions.positions"
                     item-title="name" item-value="id" label="Nama posisi" placeholder="Masukkan nama posisi"
                     variant="outlined" density="compact" :rules="[rules.required]" required />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete v-model="formData.employee.job_level_id" :items="selectOptions.selectItemLevel"
+                  <v-autocomplete v-model="formData.employee.job_level_id" :items="selectOptions.levels"
                     item-title="name" item-value="id" label="Nama level" placeholder="Masukkan nama level"
                     variant="outlined" density="compact" :rules="[rules.required]" required />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete v-model="formData.employee.approval_line_id" :items="selectOptions.selectItemLine"
+                  <v-autocomplete v-model="formData.employee.approval_line_id" :items="selectOptions.users"
                     item-title="name" item-value="id" label="Approval atasan" placeholder="Masukkan nama user"
                     variant="outlined" density="compact" :rules="[rules.required]" required />
                 </v-col>
                 <v-col md="3" cols="12">
-                  <v-autocomplete v-model="formData.employee.approval_manager_id" :items="selectOptions.selectItemMngr"
+                  <v-autocomplete v-model="formData.employee.approval_manager_id" :items="selectOptions.users"
                     item-title="name" item-value="id" label="Approval manager" placeholder="Masukkan nama user"
                     variant="outlined" density="compact" :rules="[rules.required]" required />
                 </v-col>
