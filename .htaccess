@@ -1,19 +1,26 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # Redirect to HTTPS if not already using HTTPS
-  RewriteCond %{HTTPS} off
-  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # 🔁 Force redirect to HTTP (non-HTTPS)
+  RewriteCond %{HTTPS} on
+  RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
-  # Allow direct access to existing files and directories
+  # ✅ Disable browser caching
+  <IfModule mod_headers.c>
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+  </IfModule>
+
+  # 🛑 Ignore existing files and folders
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
 
-  # Redirect all other requests to index.html for SPA routing
+  # 🔁 Route all other requests to index.html (SPA fallback)
   RewriteRule ^ index.html [QSA,L]
 </IfModule>
 
-# Optional: Prevent access to sensitive files
+# 🔒 Block access to sensitive files
 <FilesMatch "^\.env">
   Order allow,deny
   Deny from all
