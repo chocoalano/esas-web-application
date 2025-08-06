@@ -132,8 +132,8 @@ const createGoogleMapsLink = (lat, lng) => {
                   <v-col cols="12" md="6" class="d-flex justify-center align-center">
                     <v-img v-if="item.image_in"
                       :lazy-src="`${assetUrl}/${assetDirectory}/${appDebug ? 'deployment' : 'production'}/${assetDefaultImg}`"
-                      :src="`${assetUrl}/${item.image_out}`" alt="Foto Masuk" max-height="200" max-width="200"
-                      class="rounded-lg"></v-img>
+                      :src="`${assetUrl}/${assetDirectory}/${appDebug ? 'deployment' : 'production'}/${item.image_in}`"
+                      alt="Foto Masuk" max-height="200" max-width="200" class="rounded-lg"></v-img>
                     <div v-else class="text-grey-lighten-1">Tidak ada foto masuk</div>
                   </v-col>
                 </v-row>
