@@ -36,7 +36,7 @@ const { permissionCheck } = usePermissionCheck();
 <template>
   <v-app id="inspire">
     <v-app-bar elevation="0" class="border-b border-gray-200">
-      <v-img src="/src/assets/logo_esas.svg" alt="Logo ESAS" contain :max-height="$vuetify.display.xs ? 40 : 40"
+      <v-img src="/svg/logo_esas.svg" alt="Logo ESAS" contain :max-height="$vuetify.display.xs ? 40 : 40"
         :max-width="$vuetify.display.xs ? 90 : 100" class="flex-shrink-0"
         :class="{ 'ml-15 mr-15': !$vuetify.display.xs, 'ml-4 mr-2': $vuetify.display.xs }" />
 
@@ -102,7 +102,7 @@ const { permissionCheck } = usePermissionCheck();
 
     <v-navigation-drawer v-if="!display.mobile.value" permanent class="bg-background pa-4">
       <div class="font-weight-medium mb-3 text-center">{{ railMenuValue.charAt(0).toUpperCase() + railMenuValue.slice(1)
-      }}
+        }}
       </div>
       <v-divider :thickness="1" class="mb-5"></v-divider>
       <v-row>
