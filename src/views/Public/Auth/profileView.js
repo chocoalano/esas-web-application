@@ -106,8 +106,6 @@ export function useProfileView() {
       const res = await store.GET_FORM_PROFILE_ATTRIBUTE()
       if (res?.status === 200 && res.data?.form) {
         const { form } = res.data
-        console.log(form);
-
         selectOptions.value = {
           companies: form.companies,
           departements: form.departements,
@@ -134,7 +132,6 @@ export function useProfileView() {
     try {
       const res = await store.POST_PROFILE_ACTION(formData.value)
       toast.success('Profil berhasil diperbarui!')
-      console.log(res)
     } catch (error) {
       toast.error('Gagal memperbarui profil.')
       console.error(error)

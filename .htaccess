@@ -1,9 +1,9 @@
 <IfModule mod_rewrite.c>
   RewriteEngine On
 
-  # 🔁 Force redirect to HTTP (non-HTTPS)
-  RewriteCond %{HTTPS} on
-  RewriteRule ^ http://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  # 🔁 Force redirect ke HTTPS
+  RewriteCond %{HTTPS} !=on
+  RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
   # ✅ Disable browser caching
   <IfModule mod_headers.c>
@@ -12,16 +12,15 @@
     Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
   </IfModule>
 
-  # 🛑 Ignore existing files and folders
+  # 🛑 Abaikan file & folder yang memang ada
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteCond %{REQUEST_FILENAME} !-d
 
-  # 🔁 Route all other requests to index.html (SPA fallback)
+  # 🔁 Route semua permintaan lain ke index.html (SPA fallback)
   RewriteRule ^ index.html [QSA,L]
 </IfModule>
 
-# 🔒 Block access to sensitive files
+# 🔒 Blok akses ke file sensitif
 <FilesMatch "^\.env">
-  Order allow,deny
-  Deny from all
+  Require all denied
 </FilesMatch>
