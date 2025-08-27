@@ -83,9 +83,9 @@ const confirmDelete = async () => {
 <template>
   <CrudLayout :permission="[
     'view_any_companies',
+    'view_any_companies',
     'create_companies',
     'export_companies',
-    'view_companies',
     'view_companies',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin" elevation="0" rounded="xl">

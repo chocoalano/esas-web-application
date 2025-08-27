@@ -100,11 +100,11 @@ const getApprovalIcon = (approvals) => {
 
 <template>
   <CrudLayout :permission="[
-    'view_permits',
-    'view_permits',
+    'view_any_permits',
+    'view_any_permits',
     'create_permits',
-    'export_permits', // Tambahkan izin delete jika belum ada untuk CrudLayout
-    'export_permits', // Tambahkan izin delete jika belum ada untuk CrudLayout
+    'export_permits',
+    'view_permits',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin" elevation="0">
       <v-data-table-server v-model="pagination.selected" :headers="store.headers" :items="pagination.serverItems"

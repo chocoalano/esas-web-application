@@ -97,7 +97,7 @@ onMounted(() => GET_FILTER())
     'view_any_user_attendances',
     'create_user_attendances',
     'export_user_attendances',
-    'export_user_attendances',
+    'view_user_attendances',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin" elevation="0">
       <v-data-table-server v-model="pagination.selected" :headers="store.headers" :items="pagination.serverItems"

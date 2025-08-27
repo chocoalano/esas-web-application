@@ -107,6 +107,18 @@ export function useDefaultLayout() {
         to: '/app/general/dokumentasi',
         permission: 'view_any_documentations',
       },
+      {
+        text: 'General WO',
+        icon: 'mdi-apple-keyboard-command',
+        to: '/app/general/dokumentasi',
+        permission: 'view_any_work_orders',
+      },
+      {
+        text: 'WO Design/Content',
+        icon: 'mdi-palette-swatch-variant',
+        to: '/app/general/dokumentasi',
+        permission: 'view_any_work_orders',
+      },
     ])
   );
   const hrMenu = computed(() =>

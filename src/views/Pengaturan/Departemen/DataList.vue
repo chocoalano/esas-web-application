@@ -87,7 +87,7 @@ const confirmDelete = async () => {
     'view_any_departements',
     'create_departements',
     'export_departements',
-    'export_departements',
+    'view_departements',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin" elevation="0" rounded="xl">
       <v-data-table-server v-model="pagination.selected" :headers="store.headers" :items="pagination.serverItems"

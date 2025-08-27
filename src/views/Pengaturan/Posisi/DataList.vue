@@ -85,10 +85,10 @@ const cancelDelete = () => {
 <template>
   <CrudLayout :permission="[
     'view_any_job_positions',
+    'view_any_job_positions',
     'create_job_positions',
     'export_job_positions',
-    'view_job_positions', // Tambahkan izin delete jika belum ada untuk CrudLayout
-    'view_job_positions', // Tambahkan izin delete jika belum ada untuk CrudLayout
+    'view_job_positions',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin rounded-lg" elevation="0" rounded="xl">
       <v-data-table-server v-model="pagination.selected" :headers="store.headers" :items="pagination.serverItems"
