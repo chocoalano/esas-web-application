@@ -32,7 +32,7 @@ const itemToDelete = ref(null); // Bisa berupa ID tunggal atau array ID
 
 // --- Navigasi ---
 const edit = (id) => router.push({
-  name: 'pengaturan.jadwal_shift.edit',
+  name: 'aplikasi.jadwal_shift.edit',
   params: { id: id },
 });
 
@@ -44,7 +44,7 @@ const handleBtnChange = (btn) => {
       LOAD_ITEMS(); // Memuat ulang item berdasarkan filter saat ini
       break;
     case 'add':
-      router.push({ name: 'pengaturan.jadwal_shift.create' });
+      router.push({ name: 'aplikasi.jadwal_shift.create' });
       break;
     case 'export':
       EXPORT_ACTION();
@@ -91,8 +91,8 @@ onMounted(() => {
 
 <template>
   <CrudLayout :permission="[
-    'view_any_user_timework_schedules',
-    'view_any_user_timework_schedules',
+    'view_user_timework_schedules',
+    'view_user_timework_schedules',
     'create_user_timework_schedules',
     'export_user_timework_schedules',
     'view_user_timework_schedules',
