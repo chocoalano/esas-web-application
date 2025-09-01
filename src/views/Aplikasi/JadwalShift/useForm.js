@@ -52,28 +52,23 @@ export function useForm() {
       toast.error('Mohon lengkapi semua bidang yang wajib diisi dengan benar.')
       return;
     }
+    let result;
+    if (isEditMode.value) {
+      // Panggil UPDATE_ACTION dengan ID dan data
+      // formData di sini sudah objek reaktif langsung, tidak perlu .value
+      result = await store.UPDATE_ACTION(route.params.id, formData.value);
+    } else {
+      // Panggil CREATE_ACTION dengan data
+      // formData di sini sudah objek reaktif langsung, tidak perlu .value
+      result = await store.CREATE_ACTION(formData.value);
+    }
 
-    try {
-      let result;
-      if (isEditMode.value) {
-        // Panggil UPDATE_ACTION dengan ID dan data
-        // formData di sini sudah objek reaktif langsung, tidak perlu .value
-        result = await store.UPDATE_ACTION(route.params.id, formData.value);
-      } else {
-        // Panggil CREATE_ACTION dengan data
-        // formData di sini sudah objek reaktif langsung, tidak perlu .value
-        result = await store.CREATE_ACTION(formData.value);
-      }
-
-      if (result.success) {
-        toast.error(`Tersimpan!, Data berhasil disimpan`)
-        if (!isEditMode.value) store.resetForm();
-        router.push({ name: 'pengaturan.jadwal_shift.list' });
-      } else {
-        toast.error('Terjadi kesalahan!, Data gagal disimpan.')
-      }
-    } catch (error) {
-      toast.error(`Terjadi kesalahan!, Data gagal disimpan. ${error}`)
+    if (result.success) {
+      toast.success(`Tersimpan!, Data berhasil disimpan`)
+      if (!isEditMode.value) store.resetForm();
+      router.push({ name: 'aplikasi.jadwal_shift.list' });
+    } else {
+      toast.error('Terjadi kesalahan!, Data gagal disimpan.')
     }
   };
 
