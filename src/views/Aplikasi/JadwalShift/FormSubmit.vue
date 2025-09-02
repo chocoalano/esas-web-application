@@ -57,7 +57,7 @@ const onDepartemenChange = () => {
               prepend-icon="" prepend-inner-icon="mdi-calendar" density="compact" rounded="lg" />
           </v-col>
           <v-col md="4" :cols="12">
-            <v-select v-model="formData.dayoff" label="Select" :items="[
+            <v-select v-model="formData.dayoff" label="PIlih hari libur untuk shift ini." :items="[
               'Monday',
               'Tuesday',
               'Wednesday',
