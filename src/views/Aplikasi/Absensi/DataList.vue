@@ -155,7 +155,7 @@ onMounted(() => GET_FILTER())
                 class="mt-6 ml-2" density="compact" variant="outlined" rounded="lg" item-title="name"
                 item-value="value"></v-select>
             </td>
-            <td>
+            <td colspan="2">
               <v-date-input v-model="filters.createdAt" label="Cari dgn tgl dibuat" variant="outlined" rounded="lg"
                 density="compact" class="mt-6 px-2" clearable prepend-icon="" prepend-inner-icon="mdi-calendar" />
             </td>

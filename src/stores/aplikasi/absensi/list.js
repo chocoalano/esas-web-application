@@ -12,6 +12,7 @@ export const useListStore = defineStore('absenList', () => {
     { title: "TD. Masuk", align: "end", sortable: false, key: "type_in" },
     { title: "Jam Pulang", align: "end", sortable: true, key: "time_out" },
     { title: "TD. Pulang", align: "end", sortable: false, key: "type_out" },
+    { title: "Tgl Absensi", align: "end", sortable: true, key: "date_presence" },
     { title: "Waktu Dibuat", align: "end", sortable: true, key: "created_at" },
     { title: '#', key: 'actions', align: 'end', sortable: false },
   ])
