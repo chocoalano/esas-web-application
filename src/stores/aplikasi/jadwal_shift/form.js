@@ -10,6 +10,8 @@ export const useFormStore = defineStore('jadwal-shiftForm', () => {
     departement: null,
     user_id: [],
     time_work_id: null,
+    time_work_rolling_id: null,
+    is_rolling: false,
     work_day_start: null,
     work_day_finish: null,
     dayoff: [],

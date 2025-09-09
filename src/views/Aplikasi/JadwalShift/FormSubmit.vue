@@ -39,6 +39,11 @@ const onDepartemenChange = () => {
               :rules="[rules.required]" @update:modelValue="onDepartemenChange" required></v-autocomplete>
           </v-col>
           <v-col md="4" :cols="12">
+            <v-switch v-model="formData.is_rolling"
+              :label="`Apakah shift/waktu kerja akan berputar? : ${formData.is_rolling ? 'Ya' : 'Tidak'}`"
+              inset></v-switch>
+          </v-col>
+          <v-col md="4" :cols="12">
             <v-autocomplete v-model="formData.user_id" :items="store.userOptions" item-title="name" item-value="id"
               label="Pilih Pengguna" variant="outlined" density="compact" rounded="lg" :rules="[rules.required]"
               multiple required></v-autocomplete>
@@ -47,6 +52,11 @@ const onDepartemenChange = () => {
             <v-select v-model="formData.time_work_id" :items="store.timeOptions" item-title="name" item-value="id"
               label="Pilih Jam Kerja" variant="outlined" density="compact" rounded="lg" :rules="[rules.required]"
               required></v-select>
+          </v-col>
+          <v-col md="4" :cols="12" v-if="formData.is_rolling">
+            <v-select v-model="formData.time_work_rolling_id" :items="store.timeOptions" item-title="name"
+              item-value="id" label="Pilih perputaran jam kerja" variant="outlined" density="compact" rounded="lg"
+              :rules="[rules.required]" required></v-select>
           </v-col>
           <v-col md="4" :cols="12">
             <v-date-input v-model="formData.work_day_start" label="PIlih tanggal mulai" clearable variant="outlined"
