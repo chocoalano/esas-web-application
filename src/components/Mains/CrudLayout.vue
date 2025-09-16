@@ -71,9 +71,8 @@ const handleDateChange = (value) => {
 // Button toggle handling
 const toggle = ref(null)
 const handleBtnChange = (value) => {
-  const btnInfo = ['filter', 'refresh', 'add', 'export', 'print']
-  if (btnInfo[value] !== undefined) {
-    emit('btn-changed', { btn: btnInfo[value] })
+  if (value) {
+    emit('btn-changed', { btn: value })
   }
 }
 </script>
@@ -97,13 +96,15 @@ const handleBtnChange = (value) => {
           density="compact" class="mt-6 mr-3" multiple="range" rounded="xl" />
         <v-btn-toggle v-model="toggle" @update:model-value="handleBtnChange" density="comfortable" group
           variant="outlined" rounded="xl">
-          <v-btn icon="mdi-filter" v-if="permissionCheck(permission[0])"></v-btn>
-          <v-btn icon="mdi-refresh" v-if="permissionCheck(permission[1])"></v-btn>
-          <v-btn icon="mdi-plus" v-if="permissionCheck(permission[2])"></v-btn>
+          <v-btn icon="mdi-filter" v-if="permissionCheck(permission[0])" value="filter"></v-btn>
+          <v-btn icon="mdi-refresh" v-if="permissionCheck(permission[1])" value="refresh"></v-btn>
+          <v-btn icon="mdi-plus" v-if="permissionCheck(permission[2])" value="add"></v-btn>
           <v-btn icon="mdi-file-excel"
-            v-if="permissionCheck(permission[3]) || authdata.profile?.employee?.departement_id === 13"></v-btn>
+            v-if="permissionCheck(permission[3]) || authdata.profile?.employee?.departement_id === 13"
+            value="export"></v-btn>
           <v-btn icon="mdi-printer"
-            v-if="permissionCheck(permission[4]) || authdata.profile?.employee?.departement_id === 13"></v-btn>
+            v-if="permissionCheck(permission[4]) || authdata.profile?.employee?.departement_id === 13"
+            value="print"></v-btn>
         </v-btn-toggle>
       </v-col>
     </v-row>

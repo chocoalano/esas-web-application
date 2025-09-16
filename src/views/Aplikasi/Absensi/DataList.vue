@@ -40,7 +40,9 @@ const edit = (id) => router.push({
 
 // --- Penanganan Aksi Tombol CrudLayout ---
 const handleBtnChange = (btn) => {
+  console.log(btn.btn);
   switch (btn.btn) {
+
     case 'filter':
     case 'refresh':
       LOAD_ITEMS(); // Memuat ulang item berdasarkan filter saat ini
