@@ -189,8 +189,8 @@ const handleBtnChange = (btn) => {
 <template>
   <CrudLayout :permission="[
     'view_any_users',
+    'view_any_users',
     'create_users',
-    'export_users',
     'export_users',
     'export_users',
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">

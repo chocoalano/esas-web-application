@@ -85,9 +85,9 @@ const cancelDelete = () => {
 <template>
   <CrudLayout :permission="[
     'view_any_roles',
+    'view_any_roles',
     'create_roles',
     'export_roles',
-    'view_roles', // Tambahkan izin delete jika belum ada untuk CrudLayout
     'view_roles', // Tambahkan izin delete jika belum ada untuk CrudLayout
   ]" @date-range-changed="HANDLE_DATERANGE_CHANGE" @btn-changed="handleBtnChange">
     <v-card class="border border-thin rounded-lg" elevation="0" rounded="xl">
