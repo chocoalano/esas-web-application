@@ -60,6 +60,7 @@ watch(() => route.params.id, (newId) => {
     userFormStore.fetchUserData(newId);
   } else {
     isEditMode.value = false;
+    userFormStore.fetchUserDataCreate();
     userFormStore.resetForm(); // Bersihkan form jika tidak ada ID (mode tambah)
   }
 }, { immediate: true });
@@ -102,10 +103,10 @@ function onDateChangeEmpSigndate(value) {
 
 // Fungsi untuk Autocomplete bersyarat
 const onDepartemenChange = () => {
-  userFormStore.onDepartemenChange(formData.company_id, formData.employee.departement_id);
+  userFormStore.onDepartemenChange(formData.value.company_id, formData.value.employee.departement_id);
 };
 const onPositionChange = () => {
-  userFormStore.onPositionChange(formData.company_id, formData.employee.departement_id, formData.employee.job_position_id);
+  userFormStore.onPositionChange(formData.value.company_id, formData.value.employee.departement_id, formData.value.employee.job_position_id);
 };
 </script>
 

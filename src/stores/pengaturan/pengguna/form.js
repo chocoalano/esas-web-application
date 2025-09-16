@@ -103,6 +103,36 @@ export const useUserFormStore = defineStore('userForm', () => {
     }
   }
 
+  // --- Actions ---
+  async function fetchUserDataCreate(params = {}) {
+    isLoading.value = true;
+    try {
+      // Bangun query string dinamis dari params
+      const queryString = new URLSearchParams(params).toString();
+      const response = await api.get(`/general-module/users/create${queryString ? `?${queryString}` : ''}`);
+
+      const form = response?.data?.form;
+      if (!form) {
+        console.warn("Form tidak ditemukan dalam response:", response);
+        return;
+      }
+
+      // Mapping form ke state
+      selectItemCompany.value = form.companies || [];
+      selectItemDepartement.value = form.departements || [];
+      selectItemPosition.value = form.job_positions || [];
+      selectItemLevel.value = form.job_levels || [];
+      selectItemLine.value = form.users || [];
+      selectItemMngr.value = form.users || [];
+
+    } catch (err) {
+      console.error("Gagal mengambil form data:", err);
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+
   function resetForm() {
     Object.assign(formData, initialFormData());
     Object.keys(error).forEach(k => delete error[k]);
@@ -183,19 +213,12 @@ export const useUserFormStore = defineStore('userForm', () => {
   }
 
   async function onDepartemenChange(companyId, departementId) {
-    console.log(`Mengambil posisi untuk Perusahaan ID: ${companyId}, Departemen ID: ${departementId}`);
-    selectItemPosition.value = [
-      { id: 1, name: 'Developer (IT)' },
-      { id: 3, name: 'QA (IT)' }
-    ];
+    await fetchUserDataCreate({ company_id: companyId, dept_id: departementId });
   }
 
+  // Saat posisi berubah
   async function onPositionChange(companyId, departementId, positionId) {
-    console.log(`Mengambil level untuk Perusahaan ID: ${companyId}, Departemen ID: ${departementId}, Posisi ID: ${positionId}`);
-    selectItemLevel.value = [
-      { id: 1, name: 'Junior (Dev)' },
-      { id: 2, name: 'Senior (Dev)' }
-    ];
+    await fetchUserDataCreate({ company_id: companyId, dept_id: departementId, post_id: positionId });
   }
 
   // --- Return Store ---
@@ -216,6 +239,7 @@ export const useUserFormStore = defineStore('userForm', () => {
     getIsLoading,
     getFormSubmitted,
 
+    fetchUserDataCreate,
     fetchUserData,
     resetForm,
     setErrors,

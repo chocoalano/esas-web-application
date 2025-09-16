@@ -29,18 +29,20 @@ api.interceptors.request.use(
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    localStorage.removeItem('authToken');
-    if (error.response.status === 500) {
-      isLoggingOut = true;
+    console.log(error);
 
-      const authStore = useAuthStore();
-      authStore.logout();
-      // Tunggu next tick supaya route change lebih mulus
-      setTimeout(() => {
-        router.push("/login");
-        isLoggingOut = false; // Reset flag setelah redirect
-      }, 100);
-    }
+    // localStorage.removeItem('authToken');
+    // if (error.response.status === 500) {
+    //   isLoggingOut = true;
+
+    //   const authStore = useAuthStore();
+    //   authStore.logout();
+    //   // Tunggu next tick supaya route change lebih mulus
+    //   setTimeout(() => {
+    //     router.push("/login");
+    //     isLoggingOut = false; // Reset flag setelah redirect
+    //   }, 100);
+    // }
 
     return Promise.reject(error);
   }
